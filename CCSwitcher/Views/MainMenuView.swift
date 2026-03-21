@@ -1,0 +1,159 @@
+import SwiftUI
+
+/// The main popover content shown when clicking the menubar icon.
+struct MainMenuView: View {
+    @EnvironmentObject private var appState: AppState
+    @State private var selectedTab: Tab = .usage
+
+    enum Tab: String, CaseIterable {
+        case usage = "Usage"
+        case accounts = "Accounts"
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            headerView
+
+            Divider()
+
+            // Tab selector
+            tabBar
+
+            Divider()
+
+            // Content
+            Group {
+                switch selectedTab {
+                case .usage:
+                    UsageDashboardView()
+                case .accounts:
+                    AccountSwitcherView()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            Divider()
+
+            // Footer
+            footerView
+        }
+        .frame(width: 360, height: 480)
+        .task {
+            await appState.refresh()
+            appState.startAutoRefresh()
+        }
+    }
+
+    // MARK: - Header
+
+    private var headerView: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "brain.head.profile")
+                .font(.title2)
+                .foregroundStyle(.purple)
+
+            VStack(alignment: .leading, spacing: 2) {
+                if let account = appState.activeAccount {
+                    Text(account.displayName)
+                        .font(.headline)
+                    HStack(spacing: 4) {
+                        Text(account.email)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        if let sub = account.subscriptionType {
+                            Text("(\(sub))")
+                                .font(.caption2)
+                                .foregroundStyle(.purple)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 1)
+                                .background(.purple.opacity(0.1), in: Capsule())
+                        }
+                    }
+                } else {
+                    Text("CCSwitcher")
+                        .font(.headline)
+                    Text("No account connected")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Spacer()
+
+            if appState.isLoading {
+                ProgressView()
+                    .controlSize(.small)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    // MARK: - Tab Bar
+
+    private var tabBar: some View {
+        HStack(spacing: 0) {
+            ForEach(Tab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        selectedTab = tab
+                    }
+                } label: {
+                    Text(tab.rawValue)
+                        .font(.subheadline.weight(selectedTab == tab ? .semibold : .regular))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(selectedTab == tab ? Color.accentColor.opacity(0.1) : .clear)
+                        .foregroundStyle(selectedTab == tab ? .primary : .secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - Footer
+
+    private var footerView: some View {
+        HStack {
+            if let error = appState.errorMessage {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                    .font(.caption)
+                Text(error)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            Button {
+                Task { await appState.refresh() }
+            } label: {
+                Image(systemName: "arrow.clockwise")
+                    .font(.caption)
+            }
+            .buttonStyle(.plain)
+            .help("Refresh")
+
+            SettingsLink {
+                Image(systemName: "gear")
+                    .font(.caption)
+            }
+            .buttonStyle(.plain)
+            .help("Settings")
+
+            Button {
+                NSApplication.shared.terminate(nil)
+            } label: {
+                Image(systemName: "power")
+                    .font(.caption)
+            }
+            .buttonStyle(.plain)
+            .help("Quit")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+}

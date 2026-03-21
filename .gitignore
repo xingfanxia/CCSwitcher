@@ -1,0 +1,21 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserdata
+*.xcworkspace
+!*.xcodeproj/project.xcworkspace/
+xcuserdata/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+
+# Misc
+*.swp
+*~

@@ -30,9 +30,7 @@ struct UsageDashboardView: View {
                     .padding(.vertical, 40)
                 } else {
                     ForEach(appState.accounts) { account in
-                        if let usage = appState.accountUsage[account.id] {
-                            accountUsageCard(account: account, usage: usage)
-                        }
+                        accountUsageCard(account: account, usage: appState.accountUsage[account.id])
                     }
                 }
 
@@ -53,11 +51,23 @@ struct UsageDashboardView: View {
 
     // MARK: - Per-Account Card
 
-    private func accountUsageCard(account: Account, usage: UsageAPIResponse) -> some View {
+    private func accountUsageCard(account: Account, usage: UsageAPIResponse?) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             accountHeader(account)
-            usageBars(usage)
-            extraUsageRow(usage.extraUsage)
+            if let usage = usage {
+                usageBars(usage)
+                extraUsageRow(usage.extraUsage)
+            } else {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundStyle(.yellow)
+                    Text("Token expired. Switch to this account in Claude Code to refresh.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .padding(.top, 4)
+            }
         }
         .padding(12)
         .background(cardBackground(isActive: account.isActive))
@@ -71,7 +81,7 @@ struct UsageDashboardView: View {
                 .font(.caption)
                 .foregroundStyle(account.isActive ? .purple : .secondary)
 
-            Text(account.email)
+            Text(account.obfuscatedEmail)
                 .font(.caption.weight(.medium))
                 .lineLimit(1)
 

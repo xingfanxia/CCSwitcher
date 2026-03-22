@@ -4,8 +4,8 @@ import ServiceManagement
 /// Settings window for configuring the app.
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
-    @AppStorage("refreshInterval") private var refreshInterval: Double = 30
-    @AppStorage("showSessionCount") private var showSessionCount = true
+    @AppStorage("refreshInterval") private var refreshInterval: Double = 300
+    @AppStorage("showAccountName") private var showAccountName = true
     @AppStorage("showInDock") private var showInDock = false
     @State private var launchAtLogin = false
 
@@ -14,11 +14,6 @@ struct SettingsView: View {
             generalTab
                 .tabItem {
                     Label("General", systemImage: "gear")
-                }
-
-            accountsTab
-                .tabItem {
-                    Label("Accounts", systemImage: "person.2")
                 }
 
             aboutTab
@@ -42,6 +37,7 @@ struct SettingsView: View {
                     Text("30 seconds").tag(30.0)
                     Text("1 minute").tag(60.0)
                     Text("5 minutes").tag(300.0)
+                    Text("10 minutes").tag(600.0)
                 }
                 .onChange(of: refreshInterval) { _, newValue in
                     appState.startAutoRefresh(interval: newValue)
@@ -49,7 +45,7 @@ struct SettingsView: View {
             }
 
             Section("Appearance") {
-                Toggle("Show active session count in menu bar", isOn: $showSessionCount)
+                Toggle("Show account name in menu bar", isOn: $showAccountName)
             }
 
             Section("System") {
@@ -60,46 +56,6 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
-    }
-
-    // MARK: - Accounts Tab
-
-    private var accountsTab: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Manage Accounts")
-                .font(.headline)
-
-            Text("To add an account, first log in to that account in Claude Code using 'claude auth login', then click 'Add Current Account' in the main menu.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            List {
-                ForEach(appState.accounts) { account in
-                    HStack {
-                        Image(systemName: account.provider.iconName)
-                            .foregroundStyle(account.isActive ? .purple : .secondary)
-
-                        VStack(alignment: .leading) {
-                            Text(account.displayName)
-                                .font(.body.weight(.medium))
-                            Text(account.email)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Spacer()
-
-                        if account.isActive {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                        }
-                    }
-                    .padding(.vertical, 2)
-                }
-            }
-            .frame(maxHeight: .infinity)
-        }
         .padding()
     }
 

@@ -3,6 +3,7 @@ import SwiftUI
 /// The main popover content shown when clicking the menubar icon.
 struct MainMenuView: View {
     @EnvironmentObject private var appState: AppState
+    @AppStorage("refreshInterval") private var refreshInterval: Double = 300
     @State private var selectedTab: Tab = .usage
 
     enum Tab: String, CaseIterable {
@@ -41,7 +42,7 @@ struct MainMenuView: View {
         .frame(width: 360, height: 480)
         .task {
             await appState.refresh()
-            appState.startAutoRefresh()
+            appState.startAutoRefresh(interval: refreshInterval)
         }
     }
 
@@ -55,10 +56,10 @@ struct MainMenuView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 if let account = appState.activeAccount {
-                    Text(account.displayName)
+                    Text(account.obfuscatedDisplayName)
                         .font(.headline)
                     HStack(spacing: 4) {
-                        Text(account.email)
+                        Text(account.obfuscatedEmail)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         if let sub = account.subscriptionType {
@@ -136,7 +137,13 @@ struct MainMenuView: View {
             .buttonStyle(.plain)
             .help("Refresh")
 
-            SettingsLink {
+            Button {
+                NSApp.activate(ignoringOtherApps: true)
+                NotificationCenter.default.post(
+                    name: .ccswitcherOpenSettings,
+                    object: nil
+                )
+            } label: {
                 Image(systemName: "gear")
                     .font(.caption)
             }

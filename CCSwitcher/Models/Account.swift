@@ -38,6 +38,14 @@ struct Account: Identifiable, Codable, Hashable {
     var isActive: Bool
     var lastUsed: Date?
 
+    var obfuscatedEmail: String {
+        return email.obfuscatedEmail()
+    }
+
+    var obfuscatedDisplayName: String {
+        return displayName.obfuscatedEmail()
+    }
+
     init(
         id: UUID = UUID(),
         email: String,

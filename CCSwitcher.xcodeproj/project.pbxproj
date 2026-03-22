@@ -12,6 +12,7 @@
 		21F6B94958236D02084851AF /* CCSwitcherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F4C0BDF0A53D31AEEEE9C /* CCSwitcherApp.swift */; };
 		384DC76E6F7DB095F016B35F /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9464D4905F1FDFD54F612D0C /* Account.swift */; };
 		4ECDEED0375996E4D157A147 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C9F021968D98A5023CC7DD /* AppState.swift */; };
+		4EE0D54F76690451CE78A9CE /* String+Obfuscation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E712F9D88BB644C3FAF0016E /* String+Obfuscation.swift */; };
 		5DBA01AD882F72E6C6D2B05B /* UsageDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45828463CFCEFE83BDB91A63 /* UsageDashboardView.swift */; };
 		92B357811B9E5CD900435401 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5DF8875C87D62B6EABD944 /* MainMenuView.swift */; };
 		9696B8BFB9AEC0BF0FEB99FB /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C02E8FDECB24A722ADB4E01 /* ClaudeService.swift */; };
@@ -19,6 +20,7 @@
 		CDE329231EEB566D6743D92A /* FileLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A160CD0A8E1294AD5EF7CA2F /* FileLogger.swift */; };
 		D9F20156A7ED31DBA1CBBD26 /* UsageChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8716AF940A2D0A9348E549 /* UsageChartView.swift */; };
 		E67E22320538A792E36EE86C /* AccountSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D36573CCDD813531B00CE84 /* AccountSwitcherView.swift */; };
+		F8304D70D0E29534DC86FB2B /* HiddenWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCC1BDFD85A1CD5E792306F /* HiddenWindowView.swift */; };
 		FAF83AA578176C2F9CF0BE18 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A1F7BD111E480B317F06A4 /* KeychainService.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +30,7 @@
 		1F5DF8875C87D62B6EABD944 /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
 		45828463CFCEFE83BDB91A63 /* UsageDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageDashboardView.swift; sourceTree = "<group>"; };
 		495C3A2486A7AF8138ED0094 /* CCSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CCSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CCC1BDFD85A1CD5E792306F /* HiddenWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenWindowView.swift; sourceTree = "<group>"; };
 		6D36573CCDD813531B00CE84 /* AccountSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitcherView.swift; sourceTree = "<group>"; };
 		8BCE40DFF9D51007FA5C1D9A /* UsageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageData.swift; sourceTree = "<group>"; };
 		93D7D4739CE7245926CF104F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -36,6 +39,7 @@
 		9C02E8FDECB24A722ADB4E01 /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
 		A160CD0A8E1294AD5EF7CA2F /* FileLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLogger.swift; sourceTree = "<group>"; };
 		DA8716AF940A2D0A9348E549 /* UsageChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageChartView.swift; sourceTree = "<group>"; };
+		E712F9D88BB644C3FAF0016E /* String+Obfuscation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Obfuscation.swift"; sourceTree = "<group>"; };
 		E73F4C0BDF0A53D31AEEEE9C /* CCSwitcherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCSwitcherApp.swift; sourceTree = "<group>"; };
 		E7683A33A77899971BBC49FB /* StatsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsParser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -45,6 +49,7 @@
 			isa = PBXGroup;
 			children = (
 				6D36573CCDD813531B00CE84 /* AccountSwitcherView.swift */,
+				5CCC1BDFD85A1CD5E792306F /* HiddenWindowView.swift */,
 				1F5DF8875C87D62B6EABD944 /* MainMenuView.swift */,
 				17E73111D099D2229CAB10C1 /* SettingsView.swift */,
 				DA8716AF940A2D0A9348E549 /* UsageChartView.swift */,
@@ -86,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				9464D4905F1FDFD54F612D0C /* Account.swift */,
+				E712F9D88BB644C3FAF0016E /* String+Obfuscation.swift */,
 				8BCE40DFF9D51007FA5C1D9A /* UsageData.swift */,
 			);
 			path = Models;
@@ -161,10 +167,12 @@
 				21F6B94958236D02084851AF /* CCSwitcherApp.swift in Sources */,
 				9696B8BFB9AEC0BF0FEB99FB /* ClaudeService.swift in Sources */,
 				CDE329231EEB566D6743D92A /* FileLogger.swift in Sources */,
+				F8304D70D0E29534DC86FB2B /* HiddenWindowView.swift in Sources */,
 				FAF83AA578176C2F9CF0BE18 /* KeychainService.swift in Sources */,
 				92B357811B9E5CD900435401 /* MainMenuView.swift in Sources */,
 				08850DDDE28A64315C380484 /* SettingsView.swift in Sources */,
 				BA9FA62AE27386A562AF565B /* StatsParser.swift in Sources */,
+				4EE0D54F76690451CE78A9CE /* String+Obfuscation.swift in Sources */,
 				D9F20156A7ED31DBA1CBBD26 /* UsageChartView.swift in Sources */,
 				5DBA01AD882F72E6C6D2B05B /* UsageDashboardView.swift in Sources */,
 				19E3A8D3ECB28B0E1B58720D /* UsageData.swift in Sources */,

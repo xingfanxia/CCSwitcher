@@ -123,5 +123,17 @@ Modern software engineering heavily leverages AI Agents. To maximize an Agent's 
   - If tests exist, the Agent should run them. If not, the Agent should launch the built binary and use tools like `tail -f` or `grep` on the app's persistent log file to monitor the runtime behavior.
   - The Agent must autonomously scan these logs for crashes, performance bottlenecks, or unexpected `[Error]` outputs, and iteratively refine its own code until the logs reflect a healthy, stable execution.
 
+## 10. Ecosystem & Third-Party Libraries
+
+While avoiding unnecessary bloat is good, **do not reinvent the wheel for complex or core domains**. Writing everything from scratch increases the surface area for bugs, edge cases, and unexpected behaviors—especially when AI Agents are writing the code.
+
+Embrace mature, battle-tested third-party libraries via Swift Package Manager (SPM):
+- **Complex UI**: For highly interactive components (like syntax highlighters, advanced markdown renderers, or complex charts), use established community libraries instead of wrestling with raw `NSView` wrappers.
+- **Databases**: For anything beyond simple UserDefaults or lightweight SwiftData, use **GRDB**, **Realm**, or raw **SQLite.swift**. These handle thread-safety, migrations, and concurrency far better than a hand-rolled JSON file manager.
+- **Audio/Video & Media**: AVFoundation is notoriously complex and stateful. Use robust wrappers (like **AudioKit**) if doing complex media processing or recording.
+- **Logging & Telemetry**: Instead of writing a custom `FileLogger`, consider mature libraries like **CocoaLumberjack** or **SwiftyBeaver** for automatic log rotation, archiving, and thread-safe file writing.
+
+**Rule of Thumb for Agents**: When asked to implement a deeply complex feature (e.g., "add global keyboard shortcuts" or "implement an SQLite database"), an Agent should first suggest or utilize a well-known SPM library (like `HotKey` or `SQLite.swift`) rather than generating 1000 lines of fragile, low-level Swift code.
+
 ---
 *Maintained as the core standard for macOS engineering.*

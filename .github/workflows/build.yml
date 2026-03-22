@@ -1,4 +1,4 @@
-name: Build macOS App
+name: Build and Notarize macOS App
 
 on:
   push:
@@ -12,6 +12,10 @@ on:
 jobs:
   build:
     runs-on: macos-14
+    
+    # Only run notarization if the secrets are available (e.g. not on forks)
+    env:
+      HAS_APPLE_SECRETS: ${{ secrets.MAC_CERTS_P12_BASE64 != '' }}
 
     steps:
       - name: Checkout repository
@@ -23,7 +27,46 @@ jobs:
       - name: Generate Xcode Project
         run: xcodegen generate
 
-      - name: Build App
+      - name: Install Apple Certificate
+        if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTS_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.MAC_CERTS_P12_PASSWORD }}
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          KEYCHAIN_PASSWORD=$(uuidgen)
+
+          # Decode the p12 certificate from base64 secret
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+
+          # Create and configure temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # Import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          
+          # Apply partition list to prevent UI permission prompts
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+      - name: Build App (Signed)
+        if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
+        run: |
+          xcodebuild -project CCSwitcher.xcodeproj \
+            -scheme CCSwitcher \
+            -configuration Release \
+            CODE_SIGN_STYLE="Manual" \
+            CODE_SIGN_IDENTITY="Developer ID Application" \
+            ENABLE_HARDENED_RUNTIME=YES \
+            OTHER_CODE_SIGN_FLAGS="--timestamp" \
+            build \
+            SYMROOT=$(PWD)/build
+
+      - name: Build App (Unsigned fallback)
+        if: ${{ env.HAS_APPLE_SECRETS == 'false' }}
         run: |
           xcodebuild -project CCSwitcher.xcodeproj \
             -scheme CCSwitcher \
@@ -34,13 +77,41 @@ jobs:
             build \
             SYMROOT=$(PWD)/build
 
-      - name: Zip App
+      - name: Zip App for Notarization
+        if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
         run: |
           cd build/Release
-          zip -r ../../CCSwitcher-macOS.zip CCSwitcher.app
+          # Must use ditto to preserve symlinks and permissions in the .app bundle
+          /usr/bin/ditto -c -k --keepParent CCSwitcher.app CCSwitcher-Submit.zip
+
+      - name: Notarize App
+        if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+        run: |
+          cd build/Release
+          xcrun notarytool submit CCSwitcher-Submit.zip \
+            --apple-id "$APPLE_ID" \
+            --team-id "$TEAM_ID" \
+            --password "$APP_SPECIFIC_PASSWORD" \
+            --wait
+
+      - name: Staple Ticket
+        if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
+        run: |
+          cd build/Release
+          xcrun stapler staple CCSwitcher.app
+
+      - name: Zip Final App
+        run: |
+          cd build/Release
+          # Create final distribution zip
+          /usr/bin/ditto -c -k --keepParent CCSwitcher.app CCSwitcher-macOS.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CCSwitcher-App
-          path: CCSwitcher-macOS.zip
+          path: build/Release/CCSwitcher-macOS.zip

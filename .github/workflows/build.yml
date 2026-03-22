@@ -21,8 +21,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install Build Tools
+        run: brew install xcodegen create-dmg
 
       - name: Generate Xcode Project
         run: xcodegen generate
@@ -77,14 +77,29 @@ jobs:
             build \
             SYMROOT=$(PWD)/build
 
-      - name: Zip App for Notarization
+      - name: Create DMG
+        run: |
+          cd build/Release
+          # Create DMG
+          create-dmg \
+            --volname "CCSwitcher" \
+            --volicon "CCSwitcher.app/Contents/Resources/AppIcon.icns" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "CCSwitcher.app" 150 190 \
+            --hide-extension "CCSwitcher.app" \
+            --app-drop-link 450 190 \
+            "CCSwitcher.dmg" \
+            "CCSwitcher.app"
+
+      - name: Sign DMG
         if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
         run: |
           cd build/Release
-          # Must use ditto to preserve symlinks and permissions in the .app bundle
-          /usr/bin/ditto -c -k --keepParent CCSwitcher.app CCSwitcher-Submit.zip
+          codesign --force --sign "Developer ID Application" --timestamp CCSwitcher.dmg
 
-      - name: Notarize App
+      - name: Notarize DMG
         if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -92,26 +107,20 @@ jobs:
           APP_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
           cd build/Release
-          xcrun notarytool submit CCSwitcher-Submit.zip \
+          xcrun notarytool submit CCSwitcher.dmg \
             --apple-id "$APPLE_ID" \
             --team-id "$TEAM_ID" \
             --password "$APP_SPECIFIC_PASSWORD" \
             --wait
 
-      - name: Staple Ticket
+      - name: Staple Ticket to DMG
         if: ${{ env.HAS_APPLE_SECRETS == 'true' }}
         run: |
           cd build/Release
-          xcrun stapler staple CCSwitcher.app
-
-      - name: Zip Final App
-        run: |
-          cd build/Release
-          # Create final distribution zip
-          /usr/bin/ditto -c -k --keepParent CCSwitcher.app CCSwitcher-macOS.zip
+          xcrun stapler staple CCSwitcher.dmg
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CCSwitcher-App
-          path: build/Release/CCSwitcher-macOS.zip
+          name: CCSwitcher-macOS
+          path: build/Release/CCSwitcher.dmg

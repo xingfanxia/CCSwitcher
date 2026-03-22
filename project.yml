@@ -25,6 +25,7 @@ targets:
       path: CCSwitcher/Info.plist
       properties:
         LSUIElement: true
+        CFBundleDisplayName: $(PRODUCT_NAME)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleURLTypes:

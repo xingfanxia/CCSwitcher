@@ -1,9 +1,11 @@
 import Foundation
 import AppKit
+import SwiftUI
 
 @MainActor
 final class UpdateChecker: ObservableObject {
     @Published var isChecking = false
+    @Published var isDownloading = false
     @Published var updateAvailable = false
     @Published var latestVersion = ""
     @Published var releaseURL: URL?
@@ -12,17 +14,23 @@ final class UpdateChecker: ObservableObject {
     private let owner = "XueshiQiao"
     private let repo = "CCSwitcher"
     
+    struct GitHubReleaseAsset: Codable {
+        let name: String
+        let browser_download_url: String
+    }
+    
     struct GitHubRelease: Codable {
         let tag_name: String
         let html_url: String
         let name: String?
         let body: String?
+        let assets: [GitHubReleaseAsset]?
     }
 
     /// Checks for updates.
     /// - Parameter manual: If true, it will show an alert even if no update is found.
     func checkForUpdates(manual: Bool = false) {
-        guard !isChecking else { return }
+        guard !isChecking && !isDownloading else { return }
         isChecking = true
         
         Task {
@@ -55,7 +63,11 @@ final class UpdateChecker: ObservableObject {
                     self.latestVersion = latestTag
                     self.releaseURL = URL(string: release.html_url)
                     
-                    self.promptForUpdate(version: latestTag, releaseNotes: release.body ?? "", url: release.html_url)
+                    // Find the DMG asset
+                    let dmgAsset = release.assets?.first { $0.name.hasSuffix(".dmg") }
+                    let dmgURL = dmgAsset.flatMap { URL(string: $0.browser_download_url) }
+                    
+                    self.promptForUpdate(version: latestTag, releaseNotes: release.body ?? "", dmgURL: dmgURL, fallbackURL: release.html_url)
                 } else {
                     if manual {
                         self.showAlert(title: "Up to date", message: "You are running the latest version of CCSwitcher (\(currentVersion)).")
@@ -84,20 +96,101 @@ final class UpdateChecker: ObservableObject {
         return false
     }
     
-    private func promptForUpdate(version: String, releaseNotes: String, url: String) {
+    private func promptForUpdate(version: String, releaseNotes: String, dmgURL: URL?, fallbackURL: String) {
         let alert = NSAlert()
         alert.messageText = "A new version of CCSwitcher is available!"
         alert.informativeText = "Version \(version) is available. You are currently running version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown").\n\nWould you like to download it now?"
         alert.alertStyle = .informational
-        alert.addButton(withTitle: "Download")
+        
+        if dmgURL != nil {
+            alert.addButton(withTitle: "Download & Install")
+        } else {
+            alert.addButton(withTitle: "View Release")
+        }
         alert.addButton(withTitle: "Later")
         
         // Show alert and handle response
         if alert.runModal() == .alertFirstButtonReturn {
-            if let downloadURL = URL(string: url) {
-                NSWorkspace.shared.open(downloadURL)
+            if let dmgURL = dmgURL {
+                Task {
+                    await self.downloadAndOpen(url: dmgURL)
+                }
+            } else if let fallback = URL(string: fallbackURL) {
+                NSWorkspace.shared.open(fallback)
             }
         }
+    }
+    
+    private func downloadAndOpen(url: URL) async {
+        self.isDownloading = true
+        
+        // Create a floating progress panel
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 300, height: 120),
+                            styleMask: [.titled, .nonactivatingPanel],
+                            backing: .buffered,
+                            defer: false)
+        panel.title = "Downloading Update"
+        panel.level = .floating
+        panel.center()
+        
+        let stack = NSStackView()
+        stack.orientation = .vertical
+        stack.alignment = .centerX
+        stack.spacing = 15
+        stack.edgeInsets = NSEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        
+        let label = NSTextField(labelWithString: "Downloading CCSwitcher.dmg...")
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        
+        let indicator = NSProgressIndicator()
+        indicator.isIndeterminate = true
+        indicator.style = .spinning
+        indicator.startAnimation(nil)
+        
+        stack.addArrangedSubview(label)
+        stack.addArrangedSubview(indicator)
+        panel.contentView = stack
+        panel.makeKeyAndOrderFront(nil)
+        
+        do {
+            // Download the file
+            let (tempURL, response) = try await URLSession.shared.download(from: url)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                throw URLError(.badServerResponse)
+            }
+            
+            // Move temp file to Downloads folder
+            let fileManager = FileManager.default
+            let downloadsDir = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+            let destinationURL = downloadsDir.appendingPathComponent("CCSwitcher_Update.dmg")
+            
+            if fileManager.fileExists(atPath: destinationURL.path) {
+                try fileManager.removeItem(at: destinationURL)
+            }
+            
+            try fileManager.moveItem(at: tempURL, to: destinationURL)
+            panel.close()
+            
+            // Mount and open the DMG
+            NSWorkspace.shared.open(destinationURL)
+            
+            // Prompt the user to quit so they can drag the new app to Applications
+            let successAlert = NSAlert()
+            successAlert.messageText = "Download Complete"
+            successAlert.informativeText = "The update has been downloaded and opened. Please drag the new CCSwitcher to your Applications folder to replace the old one.\n\nDo you want to quit the current app now?"
+            successAlert.addButton(withTitle: "Quit CCSwitcher")
+            successAlert.addButton(withTitle: "Later")
+            
+            if successAlert.runModal() == .alertFirstButtonReturn {
+                NSApp.terminate(nil)
+            }
+            
+        } catch {
+            panel.close()
+            self.showAlert(title: "Download Failed", message: error.localizedDescription)
+        }
+        
+        self.isDownloading = false
     }
     
     private func showAlert(title: String, message: String) {

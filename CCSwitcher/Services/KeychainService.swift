@@ -1,4 +1,5 @@
 import Foundation
+import Security
 
 private let log = FileLog("Keychain")
 
@@ -191,26 +192,76 @@ final class KeychainService: Sendable {
         return getAccountBackup(forAccountId: accountId)?.token
     }
 
-    // MARK: - Backup file operations
+    // MARK: - App Keychain operations (Backups)
+
+    private let appBackupService = "me.xueshi.ccswitcher.backups"
+    private let appBackupAccount = "all-accounts"
 
     private func loadBackupStore() -> [String: AccountBackup] {
-        guard let data = FileManager.default.contents(atPath: backupsFilePath),
-              let dict = try? JSONDecoder().decode([String: AccountBackup].self, from: data) else {
-            log.debug("[loadBackupStore] No existing file or parse failed, returning empty")
-            return [:]
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: appBackupService,
+            kSecAttrAccount as String: appBackupAccount,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        
+        if status == errSecSuccess, let data = item as? Data,
+           let dict = try? JSONDecoder().decode([String: AccountBackup].self, from: data) {
+            log.debug("[loadBackupStore] Loaded \(dict.count) entries from Keychain")
+            return dict
         }
-        log.debug("[loadBackupStore] Loaded \(dict.count) entries")
-        return dict
+        
+        // Migration from local file
+        if FileManager.default.fileExists(atPath: backupsFilePath),
+           let data = FileManager.default.contents(atPath: backupsFilePath),
+           let dict = try? JSONDecoder().decode([String: AccountBackup].self, from: data) {
+            log.info("[loadBackupStore] Migrating from local backups.json to Keychain...")
+            // Save to keychain now (call saveBackupStore synchronously)
+            _ = saveBackupStore(dict)
+            // Delete old file
+            try? FileManager.default.removeItem(atPath: backupsFilePath)
+            log.info("[loadBackupStore] Migration complete, local backups.json removed")
+            return dict
+        }
+        
+        log.debug("[loadBackupStore] No existing backups, returning empty")
+        return [:]
     }
 
     private func saveBackupStore(_ store: [String: AccountBackup]) -> Bool {
         do {
             let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
             let data = try encoder.encode(store)
-            try data.write(to: URL(fileURLWithPath: backupsFilePath), options: .atomic)
-            log.debug("[saveBackupStore] Saved \(store.count) entries to \(backupsFilePath)")
-            return true
+            
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrService as String: appBackupService,
+                kSecAttrAccount as String: appBackupAccount
+            ]
+            
+            let attributes: [String: Any] = [
+                kSecValueData as String: data
+            ]
+            
+            var status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+            
+            if status == errSecItemNotFound {
+                var newItem = query
+                newItem[kSecValueData as String] = data
+                status = SecItemAdd(newItem as CFDictionary, nil)
+            }
+            
+            let success = status == errSecSuccess
+            if success {
+                log.debug("[saveBackupStore] Saved \(store.count) entries to Keychain")
+            } else {
+                log.error("[saveBackupStore] Failed to save to Keychain, OSStatus: \(status)")
+            }
+            return success
         } catch {
             log.error("[saveBackupStore] Failed: \(error.localizedDescription)")
             return false

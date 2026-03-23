@@ -45,7 +45,6 @@ struct MainMenuView: View {
         }
         .frame(width: 360, height: 480)
         .task {
-            await appState.refresh()
             appState.startAutoRefresh(interval: refreshInterval)
         }
     }

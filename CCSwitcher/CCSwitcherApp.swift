@@ -12,6 +12,7 @@ struct CCSwitcherApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var updateChecker = UpdateChecker()
     @AppStorage("showAccountName") private var showAccountName = true
+    @AppStorage("refreshInterval") private var refreshInterval: Double = 300
     
     @State private var isDoubleUsageActive = false
     let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -25,6 +26,11 @@ struct CCSwitcherApp: App {
                     // Check for updates silently on app launch
                     updateChecker.checkForUpdates(manual: false)
                     checkDoubleUsage()
+                    // Kick off background usage tracking immediately upon app start
+                    Task {
+                        await appState.refresh()
+                        appState.startAutoRefresh(interval: refreshInterval)
+                    }
                 }
                 .onReceive(timer) { _ in
                     checkDoubleUsage()

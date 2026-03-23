@@ -57,6 +57,17 @@ struct UsageDashboardView: View {
             if let usage = usage {
                 usageBars(usage)
                 extraUsageRow(usage.extraUsage)
+            } else if let errorState = appState.accountUsageErrors[account.id] {
+                HStack {
+                    Image(systemName: errorState.isRateLimited ? "timer" : (errorState.isExpired ? "exclamationmark.triangle" : "xmark.circle"))
+                        .foregroundStyle(errorState.isExpired ? .yellow : .red)
+                    Text(errorState.message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                    Spacer()
+                }
+                .padding(.top, 4)
             } else {
                 HStack {
                     Image(systemName: "exclamationmark.triangle")

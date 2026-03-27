@@ -1,5 +1,24 @@
 import SwiftUI
 
+/// Hover tooltip that works inside MenuBarExtra panels (where `.help()` doesn't).
+private struct StatWithTooltip<Content: View>: View {
+    let tooltip: String
+    @ViewBuilder let content: Content
+    @State private var isHovering = false
+
+    var body: some View {
+        content
+            .onHover { isHovering = $0 }
+            .popover(isPresented: $isHovering, arrowEdge: .bottom) {
+                Text(tooltip)
+                    .font(.caption)
+                    .padding(8)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: 200)
+            }
+    }
+}
+
 /// Shows real usage limits from Claude API, one card per account.
 struct UsageDashboardView: View {
     @EnvironmentObject private var appState: AppState
@@ -31,6 +50,9 @@ struct UsageDashboardView: View {
                 } else {
                     // Today's cost banner
                     todayCostBanner
+
+                    // Today's activity stats
+                    todayActivityCard
 
                     ForEach(appState.accounts) { account in
                         accountUsageCard(account: account, usage: appState.accountUsage[account.id])
@@ -67,14 +89,11 @@ struct UsageDashboardView: View {
                 Spacer()
             }
 
-            Text(cost >= 1 ? String(format: "$%.2f", cost) : String(format: "$%.4f", cost))
-                .font(.title.weight(.semibold).monospacedDigit())
-                .foregroundStyle(.green)
-
-            Text(Self.costDisclaimer)
-                .font(.system(size: 9))
-                .foregroundStyle(.tertiary)
-                .lineLimit(2)
+            StatWithTooltip(tooltip: Self.costDisclaimer) {
+                Text(cost >= 1 ? String(format: "$%.2f", cost) : String(format: "$%.4f", cost))
+                    .font(.title.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(.green)
+            }
         }
         .padding(12)
         .background(cardBackground(isActive: true))
@@ -82,6 +101,95 @@ struct UsageDashboardView: View {
     }
 
     private static let costDisclaimer = "Estimated API-equivalent cost of your Claude Code usage, for reference only."
+
+    // MARK: - Today Activity Card
+
+    private var todayActivityCard: some View {
+        let stats = appState.activityStats
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.path.ecg")
+                    .font(.caption)
+                    .foregroundStyle(.purple)
+                Text("Today's Activity")
+                    .font(.caption.weight(.medium))
+                Spacer()
+            }
+
+            // Top stats row
+            HStack(spacing: 0) {
+                activityStat(icon: "bubble.left.and.bubble.right", value: "\(stats.conversationTurns)", label: "Turns",
+                             tooltip: "Messages you sent to Claude Code today")
+                activityStat(icon: "clock", value: stats.activeCodingTimeString, label: "Active",
+                             tooltip: "Estimated total time Claude worked for you today. Parallel sessions stack. Idle gaps >10 min excluded. This is an approximation based on message timestamps, not exact.")
+                activityStat(icon: "doc.text", value: "\(stats.linesWritten)", label: "Lines",
+                             tooltip: "Estimated lines of code written by Claude via Edit/Write tools")
+            }
+
+            // Model usage row — same style as stats above
+            HStack(spacing: 0) {
+                modelStat(name: "Opus", count: stats.modelUsage["Opus"] ?? 0,
+                          tooltip: "Claude Opus 4 — most capable model, best for complex tasks")
+                modelStat(name: "Sonnet", count: stats.modelUsage["Sonnet"] ?? 0,
+                          tooltip: "Claude Sonnet 4 — balanced speed and capability")
+                modelStat(name: "Haiku", count: stats.modelUsage["Haiku"] ?? 0,
+                          tooltip: "Claude Haiku 4 — fastest model, best for simple tasks")
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.purple.opacity(0.03))
+                .strokeBorder(Color.purple.opacity(0.15), lineWidth: 1)
+        )
+        .padding(.horizontal, 16)
+    }
+
+    private func activityStat(icon: String, value: String, label: String, tooltip: String) -> some View {
+        StatWithTooltip(tooltip: tooltip) {
+            VStack(spacing: 2) {
+                Text(value)
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                HStack(spacing: 3) {
+                    Image(systemName: icon)
+                        .font(.system(size: 9))
+                        .foregroundStyle(.secondary)
+                    Text(label)
+                        .font(.system(size: 9))
+                        .foregroundStyle(.tertiary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    private func modelStat(name: String, count: Int, tooltip: String) -> some View {
+        StatWithTooltip(tooltip: tooltip) {
+            VStack(spacing: 2) {
+                Text("\(count)")
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(count > 0 ? .primary : .quaternary)
+                HStack(spacing: 3) {
+                    Circle()
+                        .fill(modelColor(name))
+                        .frame(width: 6, height: 6)
+                    Text(name)
+                        .font(.system(size: 9))
+                        .foregroundStyle(count > 0 ? .tertiary : .quaternary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    private func modelColor(_ name: String) -> Color {
+        switch name {
+        case "Opus": return .purple
+        case "Sonnet": return .blue
+        case "Haiku": return .green
+        default: return .gray
+        }
+    }
 
     // MARK: - Per-Account Card
 

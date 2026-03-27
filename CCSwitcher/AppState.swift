@@ -20,6 +20,7 @@ final class AppState: ObservableObject {
     @Published var claudeAvailable = false
     @Published var lastUsageRefresh: Date?
     @Published var costSummary: CostSummary = .empty
+    @Published var activityStats: ActivityStats = .empty
 
     // Store errors as special struct to surface in UI
     struct UsageErrorState {
@@ -35,6 +36,7 @@ final class AppState: ObservableObject {
     private let claudeService = ClaudeService.shared
     private let statsParser = StatsParser.shared
     private let costParser = CostParser.shared
+    private let activityParser = ActivityParser.shared
     private let keychain = KeychainService.shared
 
     private let accountsKey = "com.ccswitcher.accounts"
@@ -84,10 +86,13 @@ final class AppState: ObservableObject {
 
         // Heavy JSONL parsing off main thread
         let parser = costParser
+        let actParser = activityParser
         let cost = await Task.detached { parser.getCostSummary() }.value
+        let activity = await Task.detached { actParser.getTodayStats() }.value
         costSummary = cost
+        activityStats = activity
 
-        log.info("[refresh] Usage: weekly=\(self.usageSummary.weeklyMessages) msgs, \(self.activeSessions.count) active sessions, today=$\(String(format: "%.2f", cost.todayCost))")
+        log.info("[refresh] Usage: weekly=\(self.usageSummary.weeklyMessages) msgs, \(self.activeSessions.count) active sessions, today=$\(String(format: "%.2f", cost.todayCost)) turns=\(activity.conversationTurns)")
 
         isLoading = false
     }

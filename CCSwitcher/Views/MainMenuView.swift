@@ -21,12 +21,8 @@ struct MainMenuView: View {
                 promoBannerView
             }
 
-            Divider()
-
             // Tab selector
             tabBar
-
-            Divider()
 
             // Content
             Group {
@@ -168,20 +164,14 @@ struct MainMenuView: View {
     // MARK: - Tab Bar
 
     private var tabBar: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 0) {
             ForEach(Tab.allCases, id: \.self) { tab in
                 Text(tab.rawValue)
                     .font(.subheadline.weight(selectedTab == tab ? .semibold : .regular))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
-                    .background {
-                        if selectedTab == tab {
-                            Capsule()
-                                .fill(Color.accentColor.opacity(0.12))
-                        }
-                    }
                     .foregroundStyle(selectedTab == tab ? .primary : .secondary)
-                    .contentShape(Capsule())
+                    .contentShape(Rectangle())
                     .onTapGesture {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             selectedTab = tab
@@ -189,7 +179,21 @@ struct MainMenuView: View {
                     }
             }
         }
-        .padding(.horizontal, 8)
+        .background(Color.brand.opacity(0.06), in: Capsule())
+        .overlay {
+            GeometryReader { geo in
+                let count = CGFloat(Tab.allCases.count)
+                let tabWidth = geo.size.width / count
+                let index = CGFloat(Tab.allCases.firstIndex(of: selectedTab) ?? 0)
+                Capsule()
+                    .fill(Color.brand.opacity(0.12))
+                    .padding(2)
+                    .frame(width: tabWidth)
+                    .offset(x: tabWidth * index)
+                    .animation(.easeInOut(duration: 0.15), value: selectedTab)
+            }
+        }
+        .padding(.horizontal, 12)
         .padding(.vertical, 4)
     }
 

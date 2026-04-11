@@ -533,6 +533,109 @@ private struct LargeWidgetView: View {
     }
 }
 
+// MARK: - Circular (Rings) Widget
+
+private struct CircleWidgetView: View {
+    let data: WidgetData
+
+    private var activeAccount: WidgetAccountData? {
+        data.accounts.first(where: \.isActive) ?? data.accounts.first
+    }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            // Header
+            HStack(spacing: 5) {
+                Image(systemName: "brain.head.profile")
+                    .font(.caption)
+                    .foregroundStyle(brandColor)
+                Text("CCSwitcher")
+                    .font(.caption.weight(.semibold))
+                Spacer()
+            }
+
+            Spacer(minLength: 0)
+
+            if let account = activeAccount, !account.hasError {
+                HStack(spacing: 12) {
+                    ringStat(
+                        label: "Session",
+                        utilization: account.sessionUtilization,
+                        accent: colorForUtilization(account.sessionUtilization ?? 0)
+                    )
+                    ringStat(
+                        label: "Weekly",
+                        utilization: account.weeklyUtilization,
+                        accent: colorForUtilization(account.weeklyUtilization ?? 0)
+                    )
+                }
+                .frame(maxWidth: .infinity)
+            } else if let account = activeAccount, account.hasError {
+                VStack(spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.title3)
+                        .foregroundStyle(.yellow)
+                    Text(account.errorMessage ?? "Error")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(3)
+                }
+            } else {
+                Text("No accounts")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func ringStat(label: String, utilization: Double?, accent: Color) -> some View {
+        let pct = utilization ?? 0
+        return VStack(spacing: 4) {
+            ZStack {
+                Circle()
+                    .stroke(.quaternary, lineWidth: 6)
+                Circle()
+                    .trim(from: 0, to: min(pct / 100.0, 1.0))
+                    .stroke(accent, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                Text("\(Int(pct))%")
+                    .font(.caption.weight(.semibold).monospacedDigit())
+            }
+            .aspectRatio(1, contentMode: .fit)
+
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+private struct CircleWidgetEntryView: View {
+    var entry: CCSwitcherEntry
+
+    var body: some View {
+        if let data = entry.data {
+            CircleWidgetView(data: data)
+        } else {
+            VStack(spacing: 8) {
+                Image(systemName: "brain.head.profile")
+                    .font(.system(size: 28))
+                    .foregroundStyle(brandColor)
+                Text("Open CCSwitcher")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("to load data")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+        }
+    }
+}
+
 // MARK: - Helpers
 
 private func colorForUtilization(_ pct: Double) -> Color {
@@ -561,12 +664,28 @@ struct CCSwitcherWidget: Widget {
     }
 }
 
+struct CCSwitcherCircleWidget: Widget {
+    let kind: String = "CCSwitcherCircleWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: CCSwitcherProvider()) { entry in
+            CircleWidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("CCSwitcher Rings")
+        .description("Session and weekly usage shown as circular progress rings.")
+        .supportedFamilies([.systemSmall])
+    }
+}
+
 // MARK: - Widget Bundle
 
 @main
 struct CCSwitcherWidgetBundle: WidgetBundle {
+    @WidgetBundleBuilder
     var body: some Widget {
         CCSwitcherWidget()
+        CCSwitcherCircleWidget()
     }
 }
 

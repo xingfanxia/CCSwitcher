@@ -115,12 +115,12 @@ private struct SmallWidgetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             // Header
-            HStack(spacing: 4) {
+            HStack(spacing: 5) {
                 Image(systemName: "brain.head.profile")
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(brandColor)
                 Text("CCSwitcher")
-                    .font(.caption2.weight(.semibold))
+                    .font(.caption.weight(.semibold))
                 Spacer()
             }
 
@@ -128,15 +128,15 @@ private struct SmallWidgetView: View {
                 // Account info
                 HStack(spacing: 4) {
                     Text(account.email)
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                     Spacer()
                     if let sub = account.subscriptionType {
                         Text(sub)
-                            .font(.system(size: 9, weight: .medium))
+                            .font(.caption2.weight(.medium))
                             .foregroundStyle(brandColor)
-                            .padding(.horizontal, 4)
+                            .padding(.horizontal, 5)
                             .padding(.vertical, 1)
                             .background(brandColor.opacity(0.15), in: Capsule())
                     }
@@ -148,10 +148,10 @@ private struct SmallWidgetView: View {
                 if account.hasError {
                     HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle")
-                            .font(.caption2)
+                            .font(.caption)
                             .foregroundStyle(.yellow)
                         Text(account.errorMessage ?? "Error")
-                            .font(.system(size: 9))
+                            .font(.caption2)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
                     }
@@ -165,17 +165,17 @@ private struct SmallWidgetView: View {
                 // Today's cost
                 HStack {
                     Text(formatCost(data.todayCost))
-                        .font(.caption.weight(.semibold).monospacedDigit())
+                        .font(.title3.weight(.semibold).monospacedDigit())
                         .foregroundStyle(.green)
                     Text("today")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.tertiary)
                     Spacer()
                 }
             } else {
                 Spacer()
                 Text("No accounts")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                 Spacer()
             }
@@ -184,27 +184,27 @@ private struct SmallWidgetView: View {
 
     private func compactUsageBar(label: String, utilization: Double?) -> some View {
         let pct = utilization ?? 0
-        return VStack(spacing: 2) {
+        return VStack(spacing: 3) {
             HStack {
                 Text(label)
-                    .font(.system(size: 9))
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
                 Spacer()
                 Text("\(Int(pct))%")
-                    .font(.system(size: 9, weight: .medium).monospacedDigit())
+                    .font(.caption2.weight(.medium).monospacedDigit())
                     .foregroundStyle(colorForUtilization(pct))
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 2)
+                    RoundedRectangle(cornerRadius: 2.5)
                         .fill(.quaternary)
-                        .frame(height: 4)
-                    RoundedRectangle(cornerRadius: 2)
+                        .frame(height: 5)
+                    RoundedRectangle(cornerRadius: 2.5)
                         .fill(colorForUtilization(pct))
-                        .frame(width: max(0, geo.size.width * min(pct / 100.0, 1.0)), height: 4)
+                        .frame(width: max(0, geo.size.width * min(pct / 100.0, 1.0)), height: 5)
                 }
             }
-            .frame(height: 4)
+            .frame(height: 5)
         }
     }
 }
@@ -219,63 +219,70 @@ private struct MediumWidgetView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 0) {
             // Header row
-            HStack(spacing: 4) {
+            HStack(spacing: 5) {
                 Image(systemName: "brain.head.profile")
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(brandColor)
                 if let account = activeAccount {
                     Text(account.email)
-                        .font(.caption2.weight(.medium))
+                        .font(.caption.weight(.medium))
                         .lineLimit(1)
                     if let sub = account.subscriptionType {
                         Text(sub)
-                            .font(.system(size: 9, weight: .medium))
+                            .font(.caption2.weight(.medium))
                             .foregroundStyle(brandColor)
-                            .padding(.horizontal, 4)
+                            .padding(.horizontal, 5)
                             .padding(.vertical, 1)
                             .background(brandColor.opacity(0.15), in: Capsule())
                     }
                 }
                 Spacer()
                 Text(data.lastUpdated, style: .relative)
-                    .font(.system(size: 9))
+                    .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
 
+            Spacer(minLength: 4)
+
             // Main content: usage bars on left, activity on right
-            HStack(alignment: .top, spacing: 12) {
+            HStack(spacing: 12) {
                 // Left: Usage bars
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 0) {
                     if let account = activeAccount {
                         if account.hasError {
                             HStack(spacing: 4) {
                                 Image(systemName: "exclamationmark.triangle")
-                                    .font(.caption2)
+                                    .font(.caption)
                                     .foregroundStyle(.yellow)
                                 Text(account.errorMessage ?? "Error")
-                                    .font(.system(size: 9))
+                                    .font(.caption2)
                                     .foregroundStyle(.secondary)
                                     .lineLimit(2)
                             }
+                            Spacer(minLength: 0)
                         } else {
+                            Spacer(minLength: 0)
                             usageBar(label: "Session", utilization: account.sessionUtilization, resetTime: account.sessionResetTime)
+                            Spacer(minLength: 4)
                             usageBar(label: "Weekly", utilization: account.weeklyUtilization, resetTime: account.weeklyResetTime)
 
                             if let extra = account.extraUsageEnabled {
+                                Spacer(minLength: 4)
                                 HStack(spacing: 4) {
                                     Image(systemName: extra ? "bolt.fill" : "bolt.slash")
-                                        .font(.system(size: 9))
+                                        .font(.caption2)
                                         .foregroundStyle(extra ? .orange : .gray)
                                     Text("Extra usage")
-                                        .font(.system(size: 9))
+                                        .font(.caption2)
                                         .foregroundStyle(.secondary)
                                     Text(extra ? "On" : "Off")
-                                        .font(.system(size: 9))
+                                        .font(.caption2)
                                         .foregroundStyle(extra ? .orange : .gray)
                                 }
                             }
+                            Spacer(minLength: 0)
                         }
                     }
                 }
@@ -285,25 +292,28 @@ private struct MediumWidgetView: View {
                 Rectangle()
                     .fill(.quaternary)
                     .frame(width: 1)
-                    .padding(.vertical, 2)
 
                 // Right: Activity stats
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: 0) {
+                    Spacer(minLength: 0)
                     statRow(icon: "bubble.left.and.bubble.right", label: "Turns", value: "\(data.conversationTurns)")
+                    Spacer(minLength: 4)
                     statRow(icon: "clock", label: "Active", value: data.activeCodingTime)
+                    Spacer(minLength: 4)
                     statRow(icon: "doc.text", label: "Lines", value: "\(data.linesWritten)")
-
-                    HStack(spacing: 4) {
+                    Spacer(minLength: 4)
+                    HStack(spacing: 5) {
                         Image(systemName: "dollarsign.circle.fill")
-                            .font(.system(size: 9))
+                            .font(.caption2)
                             .foregroundStyle(.green)
                         Text(formatCost(data.todayCost))
-                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .font(.caption.weight(.semibold).monospacedDigit())
                             .foregroundStyle(.green)
                         Text("today")
-                            .font(.system(size: 9))
+                            .font(.caption2)
                             .foregroundStyle(.tertiary)
                     }
+                    Spacer(minLength: 0)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -312,27 +322,27 @@ private struct MediumWidgetView: View {
 
     private func usageBar(label: String, utilization: Double?, resetTime: String?) -> some View {
         let pct = utilization ?? 0
-        return VStack(spacing: 2) {
+        return VStack(spacing: 3) {
             HStack {
                 Text(label)
-                    .font(.system(size: 9))
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
                 Spacer()
                 if let reset = resetTime {
                     Text(reset)
-                        .font(.system(size: 8))
+                        .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
                 Text("\(Int(pct))%")
-                    .font(.system(size: 9, weight: .medium).monospacedDigit())
+                    .font(.caption2.weight(.medium).monospacedDigit())
                     .foregroundStyle(colorForUtilization(pct))
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 2)
+                    RoundedRectangle(cornerRadius: 2.5)
                         .fill(.quaternary)
                         .frame(height: 5)
-                    RoundedRectangle(cornerRadius: 2)
+                    RoundedRectangle(cornerRadius: 2.5)
                         .fill(colorForUtilization(pct))
                         .frame(width: max(0, geo.size.width * min(pct / 100.0, 1.0)), height: 5)
                 }
@@ -342,17 +352,17 @@ private struct MediumWidgetView: View {
     }
 
     private func statRow(icon: String, label: String, value: String) -> some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 5) {
             Image(systemName: icon)
-                .font(.system(size: 9))
+                .font(.caption2)
                 .foregroundStyle(.secondary)
-                .frame(width: 12)
+                .frame(width: 14)
             Text(label)
-                .font(.system(size: 9))
+                .font(.caption2)
                 .foregroundStyle(.tertiary)
             Spacer()
             Text(value)
-                .font(.caption2.weight(.medium).monospacedDigit())
+                .font(.caption.weight(.medium).monospacedDigit())
         }
     }
 }
@@ -363,19 +373,21 @@ private struct LargeWidgetView: View {
     let data: WidgetData
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             // Header
-            HStack(spacing: 4) {
+            HStack(spacing: 5) {
                 Image(systemName: "brain.head.profile")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(brandColor)
                 Text("CCSwitcher")
-                    .font(.caption.weight(.semibold))
+                    .font(.subheadline.weight(.semibold))
                 Spacer()
                 Text(data.lastUpdated, style: .relative)
-                    .font(.system(size: 9))
+                    .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
+
+            Spacer(minLength: 4)
 
             // Today's activity row
             HStack(spacing: 0) {
@@ -384,8 +396,10 @@ private struct LargeWidgetView: View {
                 activityStat(icon: "doc.text", value: "\(data.linesWritten)", label: "Lines")
                 activityStat(icon: "dollarsign.circle.fill", value: formatCost(data.todayCost), label: "Cost", valueColor: .green)
             }
-            .padding(.vertical, 4)
-            .background(brandColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+            .padding(.vertical, 8)
+            .background(brandColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+
+            Spacer(minLength: 4)
 
             // Model usage row
             if !data.modelUsage.isEmpty {
@@ -394,11 +408,16 @@ private struct LargeWidgetView: View {
                     modelStat(name: "Sonnet", count: data.modelUsage["Sonnet"] ?? 0, color: .blue)
                     modelStat(name: "Haiku", count: data.modelUsage["Haiku"] ?? 0, color: .green)
                 }
+
+                Spacer(minLength: 4)
             }
 
             // Per-account cards
-            ForEach(Array(data.accounts.enumerated()), id: \.offset) { _, account in
+            ForEach(Array(data.accounts.enumerated()), id: \.offset) { index, account in
                 accountCard(account)
+                if index < data.accounts.count - 1 {
+                    Spacer(minLength: 4)
+                }
             }
 
             Spacer(minLength: 0)
@@ -406,16 +425,16 @@ private struct LargeWidgetView: View {
     }
 
     private func activityStat(icon: String, value: String, label: String, valueColor: Color = .primary) -> some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 3) {
             Text(value)
-                .font(.caption2.weight(.semibold).monospacedDigit())
+                .font(.callout.weight(.semibold).monospacedDigit())
                 .foregroundStyle(valueColor)
-            HStack(spacing: 2) {
+            HStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: 8))
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
                 Text(label)
-                    .font(.system(size: 8))
+                    .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
         }
@@ -423,16 +442,16 @@ private struct LargeWidgetView: View {
     }
 
     private func modelStat(name: String, count: Int, color: Color) -> some View {
-        VStack(spacing: 1) {
+        VStack(spacing: 2) {
             Text("\(count)")
-                .font(.system(size: 10, weight: .semibold).monospacedDigit())
+                .font(.caption.weight(.semibold).monospacedDigit())
                 .foregroundStyle(count > 0 ? .primary : .quaternary)
-            HStack(spacing: 2) {
+            HStack(spacing: 3) {
                 Circle()
                     .fill(color)
-                    .frame(width: 5, height: 5)
+                    .frame(width: 6, height: 6)
                 Text(name)
-                    .font(.system(size: 8))
+                    .font(.caption2)
                     .foregroundStyle(count > 0 ? .tertiary : .quaternary)
             }
         }
@@ -440,38 +459,38 @@ private struct LargeWidgetView: View {
     }
 
     private func accountCard(_ account: WidgetAccountData) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 5) {
             // Account header
-            HStack(spacing: 4) {
+            HStack(spacing: 5) {
                 Image(systemName: "brain.head.profile")
-                    .font(.system(size: 9))
+                    .font(.caption2)
                     .foregroundStyle(account.isActive ? brandColor : .secondary)
                 Text(account.email)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.caption.weight(.medium))
                     .lineLimit(1)
                 if account.isActive {
                     Text("Active")
-                        .font(.system(size: 8, weight: .semibold))
+                        .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 4)
+                        .padding(.horizontal, 5)
                         .padding(.vertical, 1)
                         .background(.green, in: Capsule())
                 }
                 Spacer()
                 if let sub = account.subscriptionType {
                     Text(sub)
-                        .font(.system(size: 8, weight: .medium))
+                        .font(.caption2.weight(.medium))
                         .foregroundStyle(brandColor)
                 }
             }
 
             if account.hasError {
-                HStack(spacing: 3) {
+                HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 9))
+                        .font(.caption2)
                         .foregroundStyle(.yellow)
                     Text(account.errorMessage ?? "Error")
-                        .font(.system(size: 9))
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
@@ -480,9 +499,9 @@ private struct LargeWidgetView: View {
                 accountUsageBar(label: "Weekly", utilization: account.weeklyUtilization, resetTime: account.weeklyResetTime)
             }
         }
-        .padding(8)
+        .padding(10)
         .background(
-            RoundedRectangle(cornerRadius: 6)
+            RoundedRectangle(cornerRadius: 8)
                 .fill(account.isActive ? brandColor.opacity(0.08) : Color.gray.opacity(0.08))
                 .strokeBorder(account.isActive ? brandColor.opacity(0.25) : Color.gray.opacity(0.15), lineWidth: 0.5)
         )
@@ -492,24 +511,24 @@ private struct LargeWidgetView: View {
         let pct = utilization ?? 0
         return HStack(spacing: 6) {
             Text(label)
-                .font(.system(size: 9))
+                .font(.caption2)
                 .foregroundStyle(.secondary)
-                .frame(width: 42, alignment: .leading)
+                .frame(width: 48, alignment: .leading)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 2)
+                    RoundedRectangle(cornerRadius: 2.5)
                         .fill(.quaternary)
-                        .frame(height: 4)
-                    RoundedRectangle(cornerRadius: 2)
+                        .frame(height: 5)
+                    RoundedRectangle(cornerRadius: 2.5)
                         .fill(colorForUtilization(pct))
-                        .frame(width: max(0, geo.size.width * min(pct / 100.0, 1.0)), height: 4)
+                        .frame(width: max(0, geo.size.width * min(pct / 100.0, 1.0)), height: 5)
                 }
             }
-            .frame(height: 4)
+            .frame(height: 5)
             Text("\(Int(pct))%")
-                .font(.system(size: 9, weight: .medium).monospacedDigit())
+                .font(.caption2.weight(.medium).monospacedDigit())
                 .foregroundStyle(colorForUtilization(pct))
-                .frame(width: 28, alignment: .trailing)
+                .frame(width: 32, alignment: .trailing)
         }
     }
 }

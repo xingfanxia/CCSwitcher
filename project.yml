@@ -21,6 +21,7 @@ targets:
     platform: macOS
     sources:
       - path: CCSwitcher
+      - path: Shared
     info:
       path: CCSwitcher/Info.plist
       properties:
@@ -44,3 +45,40 @@ targets:
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
     entitlements:
       path: CCSwitcher/Resources/CCSwitcher.entitlements
+    dependencies:
+      - target: CCSwitcherWidgetExtension
+        embed: true
+        codeSign: true
+
+  CCSwitcherWidgetExtension:
+    type: extensionkit-extension
+    platform: macOS
+    sources:
+      - path: CCSwitcherWidget
+      - path: Shared
+    info:
+      path: CCSwitcherWidget/Info.plist
+      properties:
+        CFBundleDisplayName: CCSwitcher Widget
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        EXAppExtensionAttributes:
+          EXExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: me.xueshi.ccswitcher.widget
+        CODE_SIGN_ENTITLEMENTS: CCSwitcherWidget/Resources/CCSwitcherWidget.entitlements
+        PRODUCT_NAME: CCSwitcherWidgetExtension
+        MARKETING_VERSION: "1.1.2"
+        CURRENT_PROJECT_VERSION: "32"
+        SWIFT_VERSION: "6.0"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 584KQTRF3B
+        SWIFT_STRICT_CONCURRENCY: targeted
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks"
+        SKIP_INSTALL: true
+    entitlements:
+      path: CCSwitcherWidget/Resources/CCSwitcherWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true

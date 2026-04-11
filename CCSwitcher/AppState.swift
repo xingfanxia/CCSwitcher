@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import WidgetKit
 
 private let log = FileLog("AppState")
 
@@ -94,6 +95,7 @@ final class AppState: ObservableObject {
 
         log.info("[refresh] Usage: weekly=\(self.usageSummary.weeklyMessages) msgs, \(self.activeSessions.count) active sessions, today=$\(String(format: "%.2f", cost.todayCost)) turns=\(activity.conversationTurns)")
 
+        updateWidgetData()
         isLoading = false
     }
 
@@ -459,6 +461,41 @@ final class AppState: ObservableObject {
         }
 
         log.info("[diagnose] === End Health Check ===")
+    }
+
+    // MARK: - Widget
+
+    private func updateWidgetData() {
+        let widgetAccounts = accounts.map { account in
+            let usage = accountUsage[account.id]
+            let error = accountUsageErrors[account.id]
+            return WidgetAccountData(
+                email: account.obfuscatedEmail,
+                displayName: account.obfuscatedDisplayName,
+                subscriptionType: account.subscriptionType,
+                isActive: account.isActive,
+                sessionUtilization: usage?.fiveHour?.utilization,
+                sessionResetTime: usage?.fiveHour?.resetTimeString,
+                weeklyUtilization: usage?.sevenDay?.utilization,
+                weeklyResetTime: usage?.sevenDay?.resetTimeString,
+                extraUsageEnabled: usage?.extraUsage?.isEnabled,
+                hasError: error != nil,
+                errorMessage: error?.message
+            )
+        }
+
+        let data = WidgetData(
+            accounts: widgetAccounts,
+            todayCost: costSummary.todayCost,
+            conversationTurns: activityStats.conversationTurns,
+            activeCodingTime: activityStats.activeCodingTimeString,
+            linesWritten: activityStats.linesWritten,
+            modelUsage: activityStats.modelUsage,
+            lastUpdated: Date()
+        )
+        data.save()
+        WidgetCenter.shared.reloadAllTimelines()
+        log.debug("[updateWidgetData] Widget data saved and timelines reloaded")
     }
 
     // MARK: - Persistence

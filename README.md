@@ -1,3 +1,5 @@
+<p align="center">[English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [Deutsch](README.de.md) | [Français](README.fr.md)</p>
+
 # CCSwitcher
 
 CCSwitcher is a lightweight, pure menu bar macOS application designed to help developers seamlessly manage and switch between multiple Claude Code accounts. It monitors API usage, gracefully handles background token refreshes, and circumvents common macOS menu bar app limitations.

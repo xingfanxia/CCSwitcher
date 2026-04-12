@@ -9,6 +9,7 @@ struct SettingsView: View {
     @AppStorage("showAccountName") private var showAccountName = true
     @AppStorage("showFullEmail") private var showFullEmail = false
     @AppStorage("showInDock") private var showInDock = false
+    @AppStorage("appLanguage") private var appLanguage = "auto"
     @State private var launchAtLogin = false
 
     var body: some View {
@@ -49,6 +50,18 @@ struct SettingsView: View {
             Section("Appearance") {
                 Toggle("Show account name in menu bar", isOn: $showAccountName)
                 Toggle("Show full email address", isOn: $showFullEmail)
+                Picker("Language", selection: $appLanguage) {
+                    Text("Automatic").tag("auto")
+                    Divider()
+                    Text("English").tag("en")
+                    Text("中文（简体）").tag("zh-Hans")
+                    Text("日本語").tag("ja")
+                    Text("Deutsch").tag("de")
+                    Text("Français").tag("fr")
+                }
+                .onChange(of: appLanguage) { _, newValue in
+                    applyLanguage(newValue)
+                }
             }
 
             Section("System") {
@@ -100,6 +113,21 @@ struct SettingsView: View {
     }
 
     // MARK: - Helpers
+
+    private func applyLanguage(_ lang: String) {
+        if lang == "auto" {
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        } else {
+            UserDefaults.standard.set([lang], forKey: "AppleLanguages")
+        }
+        // Relaunch for language change to take effect
+        let path = Bundle.main.bundleURL.path
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        task.arguments = [path]
+        try? task.run()
+        NSApp.terminate(nil)
+    }
 
     private func toggleLaunchAtLogin(_ enable: Bool) {
         do {

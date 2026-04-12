@@ -112,7 +112,7 @@ struct AccountSwitcherView: View {
                     .foregroundStyle(.secondary)
 
                 HStack(spacing: 8) {
-                    if let sub = account.subscriptionType {
+                    if let sub = account.displaySubscriptionType {
                         Label(sub, systemImage: "creditcard")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
@@ -229,12 +229,13 @@ struct AccountSwitcherView: View {
                     Task { await appState.loginNewAccount() }
                 } label: {
                     Label("Login New Account", systemImage: "person.badge.plus")
-                        .font(.subheadline)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(Color(red: 0x42/255, green: 0x42/255, blue: 0x42/255))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
+                        .background(Color.white, in: RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.brand)
+                .buttonStyle(.plain)
 
                 // Secondary: Capture already-logged-in account
                 Button {

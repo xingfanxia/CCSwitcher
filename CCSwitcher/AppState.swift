@@ -484,7 +484,7 @@ final class AppState: ObservableObject {
             return WidgetAccountData(
                 email: account.displayEmail(obfuscated: !UserDefaults.standard.bool(forKey: "showFullEmail")),
                 displayName: account.effectiveDisplayName(obfuscated: !UserDefaults.standard.bool(forKey: "showFullEmail")),
-                subscriptionType: account.subscriptionType,
+                subscriptionType: account.displaySubscriptionType,
                 isActive: account.isActive,
                 sessionUtilization: usage?.fiveHour?.utilization,
                 sessionResetTime: usage?.fiveHour?.resetTimeString,

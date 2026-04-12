@@ -132,23 +132,23 @@ struct MainMenuView: View {
                 .font(.title2)
                 .foregroundStyle(.brand)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 if let account = appState.activeAccount {
-                    Text(account.effectiveDisplayName(obfuscated: !showFullEmail))
-                        .font(.headline)
-                    HStack(spacing: 4) {
-                        Text(account.displayEmail(obfuscated: !showFullEmail))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        if let sub = account.subscriptionType {
-                            Text("(\(sub))")
-                                .font(.caption2)
-                                .foregroundStyle(.brand)
-                                .padding(.horizontal, 4)
-                                .padding(.vertical, 1)
-                                .background(.subtleBrand, in: Capsule())
+                    HStack(spacing: 6) {
+                        Text(account.effectiveDisplayName(obfuscated: !showFullEmail))
+                            .font(.headline)
+                        if let sub = account.displaySubscriptionType {
+                            Text(sub)
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(.brand, in: Capsule())
                         }
                     }
+                    Text(account.displayEmail(obfuscated: !showFullEmail))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 } else {
                     Text("CCSwitcher")
                         .font(.headline)
@@ -172,35 +172,43 @@ struct MainMenuView: View {
     // MARK: - Tab Bar
 
     private var tabBar: some View {
-        HStack(spacing: 0) {
-            ForEach(Tab.allCases, id: \.self) { tab in
-                Text(tab.localizedTitle)
-                    .font(.subheadline.weight(selectedTab == tab ? .semibold : .regular))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-                    .foregroundStyle(selectedTab == tab ? .primary : .secondary)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            selectedTab = tab
-                        }
-                    }
-            }
-        }
-        .background(.tabBackground, in: Capsule())
-        .overlay {
+        ZStack {
+            // Background capsule — 15% white fill + 40% white stroke
+            Capsule()
+                .fill(Color.white.opacity(0.15))
+                .overlay(Capsule().stroke(Color.white.opacity(0.40), lineWidth: 1))
+
+            // Sliding indicator
             GeometryReader { geo in
                 let count = CGFloat(Tab.allCases.count)
                 let tabWidth = geo.size.width / count
                 let index = CGFloat(Tab.allCases.firstIndex(of: selectedTab) ?? 0)
                 Capsule()
-                    .fill(.tabSelected)
+                    .fill(Color.brand)
                     .padding(2)
                     .frame(width: tabWidth)
                     .offset(x: tabWidth * index)
                     .animation(.easeInOut(duration: 0.15), value: selectedTab)
             }
+
+            // Tab labels on top
+            HStack(spacing: 0) {
+                ForEach(Tab.allCases, id: \.self) { tab in
+                    Text(tab.localizedTitle)
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                        .foregroundStyle(selectedTab == tab ? .white : .secondary)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.15)) {
+                                selectedTab = tab
+                            }
+                        }
+                }
+            }
         }
+        .frame(height: 30)
         .padding(.horizontal, 12)
         .padding(.vertical, 4)
     }

@@ -3,7 +3,7 @@ import SwiftUI
 
 // MARK: - Brand Color
 
-private let brandColor = Color(red: 0xD9 / 255.0, green: 0x77 / 255.0, blue: 0x57 / 255.0)
+private let brandColor = Color(red: 0xE8 / 255.0, green: 0x6D / 255.0, blue: 0x45 / 255.0)
 
 // MARK: - Timeline Entry
 
@@ -311,7 +311,7 @@ private struct MediumWidgetView: View {
                 // Right: Activity stats
                 VStack(alignment: .leading, spacing: 0) {
                     Spacer(minLength: 0)
-                    statRow(icon: "dollarsign.circle.fill", label: "Cost", value: formatCost(data.todayCost), valueColor: .green)
+                    statRow(icon: "dollarsign.circle", label: "Cost", value: formatCost(data.todayCost), valueColor: .green)
                     Spacer(minLength: 4)
                     statRow(icon: "bubble.left.and.bubble.right", label: "Turns", value: "\(data.conversationTurns)")
                     Spacer(minLength: 4)
@@ -400,7 +400,7 @@ private struct LargeWidgetView: View {
                     activityStat(icon: "bubble.left.and.bubble.right", value: "\(data.conversationTurns)", label: "Turns")
                     activityStat(icon: "clock", value: data.activeCodingTime, label: "Active")
                     activityStat(icon: "doc.text", value: "\(data.linesWritten)", label: "Lines")
-                    activityStat(icon: "dollarsign.circle.fill", value: formatCost(data.todayCost), label: "Cost", valueColor: .green)
+                    activityStat(icon: "dollarsign.circle", value: formatCost(data.todayCost), label: "Cost", valueColor: .green)
                 }
 
                 if !data.modelUsage.isEmpty {

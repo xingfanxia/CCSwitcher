@@ -25,6 +25,10 @@
 "Show full email address" = "メールアドレスを完全に表示";
 "Launch at login" = "ログイン時に起動";
 
+/* Language */
+"Language" = "言語";
+"Automatic" = "自動";
+
 /* Settings - About */
 "Claude Code Account Switcher" = "Claude Code アカウント切り替えツール";
 "Version %@" = "バージョン %@";

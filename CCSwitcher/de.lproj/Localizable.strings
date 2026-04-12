@@ -25,6 +25,10 @@
 "Show full email address" = "Vollständige E-Mail-Adresse anzeigen";
 "Launch at login" = "Beim Anmelden starten";
 
+/* Language */
+"Language" = "Sprache";
+"Automatic" = "Automatisch";
+
 /* Settings - About */
 "Claude Code Account Switcher" = "Claude Code Kontowechsler";
 "Version %@" = "Version %@";

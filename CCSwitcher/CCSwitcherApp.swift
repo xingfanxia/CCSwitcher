@@ -1,6 +1,17 @@
 import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+    override init() {
+        // Apply saved language preference before any UI loads
+        let lang = UserDefaults.standard.string(forKey: "appLanguage") ?? "auto"
+        if lang != "auto" {
+            UserDefaults.standard.set([lang], forKey: "AppleLanguages")
+        } else {
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        }
+        super.init()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // App starts as agent/accessory due to LSUIElement
     }

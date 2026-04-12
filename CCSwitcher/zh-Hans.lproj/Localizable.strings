@@ -25,6 +25,10 @@
 "Show full email address" = "显示完整邮箱地址";
 "Launch at login" = "登录时启动";
 
+/* Language */
+"Language" = "语言";
+"Automatic" = "自动";
+
 /* Settings - About */
 "Claude Code Account Switcher" = "Claude Code 账户切换工具";
 "Version %@" = "版本 %@";

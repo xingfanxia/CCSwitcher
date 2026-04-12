@@ -82,7 +82,7 @@ struct UsageDashboardView: View {
         let cost = appState.costSummary.todayCost
         return VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
-                Image(systemName: "dollarsign.circle.fill")
+                Image(systemName: "dollarsign.circle")
                     .font(.subheadline)
                     .foregroundStyle(.green)
                 Text("Today's API-Equivalent Cost")
@@ -251,13 +251,13 @@ struct UsageDashboardView: View {
 
             Spacer()
 
-            if let sub = account.subscriptionType {
+            if let sub = account.displaySubscriptionType {
                 Text(sub)
-                    .font(.caption)
-                    .foregroundStyle(.brand)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(.subtleBrand, in: Capsule())
+                    .background(.brand, in: Capsule())
             }
         }
     }

@@ -25,6 +25,10 @@
 "Show full email address" = "Show full email address";
 "Launch at login" = "Launch at login";
 
+/* Language */
+"Language" = "Language";
+"Automatic" = "Automatic";
+
 /* Settings - About */
 "Claude Code Account Switcher" = "Claude Code Account Switcher";
 "Version %@" = "Version %@";

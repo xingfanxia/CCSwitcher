@@ -39,6 +39,11 @@ struct Account: Identifiable, Codable, Hashable {
     var lastUsed: Date?
     var customLabel: String?
 
+    /// Subscription type with first letter capitalized (e.g., "max" → "Max").
+    var displaySubscriptionType: String? {
+        subscriptionType?.prefix(1).uppercased().appending(subscriptionType?.dropFirst() ?? "")
+    }
+
     var obfuscatedEmail: String {
         return email.obfuscatedEmail()
     }

@@ -60,7 +60,7 @@ struct CCSwitcherApp: App {
             Image(systemName: isDoubleUsageActive ? "brain.head.profile.fill" : "brain.head.profile")
             if showAccountName {
                 if let account = appState.activeAccount {
-                    Text(account.obfuscatedDisplayName)
+                    Text(account.effectiveDisplayName)
                         .font(.caption)
                 }
             }

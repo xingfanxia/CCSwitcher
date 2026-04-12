@@ -127,7 +127,7 @@ struct MainMenuView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 if let account = appState.activeAccount {
-                    Text(account.obfuscatedDisplayName)
+                    Text(account.effectiveDisplayName)
                         .font(.headline)
                     HStack(spacing: 4) {
                         Text(account.obfuscatedEmail)

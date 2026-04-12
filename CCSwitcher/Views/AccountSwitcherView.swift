@@ -4,6 +4,8 @@ import SwiftUI
 struct AccountSwitcherView: View {
     @EnvironmentObject private var appState: AppState
     @State private var showingAddConfirm = false
+    @State private var editingAccountId: UUID?
+    @State private var editingLabel = ""
 
     var body: some View {
         ScrollView {
@@ -54,17 +56,53 @@ struct AccountSwitcherView: View {
 
             // Account info
             VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
-                    Text(account.obfuscatedDisplayName)
-                        .font(.subheadline.weight(.medium))
+                if editingAccountId == account.id {
+                    HStack(spacing: 4) {
+                        TextField("Custom label", text: $editingLabel)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.subheadline)
+                            .onSubmit { commitLabelEdit(account) }
 
-                    if account.isActive {
-                        Text("Active")
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(.green, in: Capsule())
+                        Button {
+                            commitLabelEdit(account)
+                        } label: {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            editingAccountId = nil
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                } else {
+                    HStack(spacing: 6) {
+                        Text(account.effectiveDisplayName)
+                            .font(.subheadline.weight(.medium))
+
+                        Button {
+                            editingLabel = account.customLabel ?? ""
+                            editingAccountId = account.id
+                        } label: {
+                            Image(systemName: "pencil")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Edit label")
+
+                        if account.isActive {
+                            Text("Active")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(.green, in: Capsule())
+                        }
                     }
                 }
 
@@ -122,6 +160,11 @@ struct AccountSwitcherView: View {
                 .fill(account.isActive ? .cardFillStrong : .clear)
                 .strokeBorder(account.isActive ? .cardBorderBrand : .cardBorderNeutral, lineWidth: 1)
         )
+    }
+
+    private func commitLabelEdit(_ account: Account) {
+        appState.updateAccountLabel(account, label: editingLabel)
+        editingAccountId = nil
     }
 
     // MARK: - Add Account Buttons

@@ -37,6 +37,7 @@ struct Account: Identifiable, Codable, Hashable {
     var subscriptionType: String?
     var isActive: Bool
     var lastUsed: Date?
+    var customLabel: String?
 
     var obfuscatedEmail: String {
         return email.obfuscatedEmail()
@@ -44,6 +45,14 @@ struct Account: Identifiable, Codable, Hashable {
 
     var obfuscatedDisplayName: String {
         return displayName.obfuscatedEmail()
+    }
+
+    /// Returns customLabel if set and non-empty, otherwise falls back to obfuscatedDisplayName.
+    var effectiveDisplayName: String {
+        if let label = customLabel, !label.isEmpty {
+            return label
+        }
+        return obfuscatedDisplayName
     }
 
     init(
@@ -54,7 +63,8 @@ struct Account: Identifiable, Codable, Hashable {
         orgName: String? = nil,
         subscriptionType: String? = nil,
         isActive: Bool = false,
-        lastUsed: Date? = nil
+        lastUsed: Date? = nil,
+        customLabel: String? = nil
     ) {
         self.id = id
         self.email = email
@@ -64,6 +74,7 @@ struct Account: Identifiable, Codable, Hashable {
         self.subscriptionType = subscriptionType
         self.isActive = isActive
         self.lastUsed = lastUsed
+        self.customLabel = customLabel
     }
 }
 

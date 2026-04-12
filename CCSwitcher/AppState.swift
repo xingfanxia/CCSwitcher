@@ -257,6 +257,18 @@ final class AppState: ObservableObject {
         }
     }
 
+    func updateAccountLabel(_ account: Account, label: String?) {
+        guard let index = accounts.firstIndex(where: { $0.id == account.id }) else { return }
+        let trimmed = label?.trimmingCharacters(in: .whitespaces)
+        accounts[index].customLabel = (trimmed?.isEmpty == true) ? nil : trimmed
+        if accounts[index].isActive {
+            activeAccount = accounts[index]
+        }
+        saveAccounts()
+        updateWidgetData()
+        log.info("[updateAccountLabel] Set label for \(account.email): \(trimmed ?? "nil")")
+    }
+
     func removeAccount(_ account: Account) {
         log.info("[removeAccount] Removing account \(account.id)")
         keychain.removeAccountBackup(forAccountId: account.id.uuidString)
@@ -471,7 +483,7 @@ final class AppState: ObservableObject {
             let error = accountUsageErrors[account.id]
             return WidgetAccountData(
                 email: account.obfuscatedEmail,
-                displayName: account.obfuscatedDisplayName,
+                displayName: account.effectiveDisplayName,
                 subscriptionType: account.subscriptionType,
                 isActive: account.isActive,
                 sessionUtilization: usage?.fiveHour?.utilization,

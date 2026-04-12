@@ -204,7 +204,7 @@ struct MainMenuView: View {
             }
         }
         .frame(height: 30)
-        .padding(.horizontal, 12)
+        .sectionPadding()
         .padding(.vertical, 4)
     }
 

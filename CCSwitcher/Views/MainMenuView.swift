@@ -43,6 +43,7 @@ struct MainMenuView: View {
             footerView
         }
         .frame(width: 360, height: 540)
+        .background(.ultraThinMaterial)
     }
 
     // MARK: - Promo Banner

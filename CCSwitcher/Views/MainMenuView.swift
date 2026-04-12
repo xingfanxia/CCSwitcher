@@ -17,6 +17,14 @@ struct MainMenuView: View {
             case .accounts: "Accounts"
             }
         }
+
+        var iconName: String {
+            switch self {
+            case .usage: "chart.bar.fill"
+            case .costs: "dollarsign.circle.fill"
+            case .accounts: "person.2.fill"
+            }
+        }
     }
 
     var body: some View {
@@ -189,22 +197,26 @@ struct MainMenuView: View {
             // Tab labels on top
             HStack(spacing: 0) {
                 ForEach(Tab.allCases, id: \.self) { tab in
-                    Text(tab.localizedTitle)
-                        .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                        .foregroundStyle(selectedTab == tab ? .white : .textSecondary)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            withAnimation(.easeInOut(duration: 0.15)) {
-                                selectedTab = tab
-                            }
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.iconName)
+                            .font(.system(size: 12))
+                        Text(tab.localizedTitle)
+                            .font(.caption2.weight(.semibold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                    .foregroundStyle(selectedTab == tab ? .white : .textSecondary)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            selectedTab = tab
                         }
+                    }
                 }
             }
         }
-        .frame(height: 30)
-        .sectionPadding()
+        .frame(width: 260, height: 44)
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 4)
     }
 
@@ -231,6 +243,7 @@ struct MainMenuView: View {
                     .font(.caption)
             }
             .buttonStyle(.plain)
+            .focusable(false)
             .help("Refresh")
 
             Button {
@@ -244,6 +257,7 @@ struct MainMenuView: View {
                     .font(.caption)
             }
             .buttonStyle(.plain)
+            .focusable(false)
             .help("Settings")
 
             Button {
@@ -253,6 +267,7 @@ struct MainMenuView: View {
                     .font(.caption)
             }
             .buttonStyle(.plain)
+            .focusable(false)
             .help("Quit")
         }
         .padding(.horizontal, 16)

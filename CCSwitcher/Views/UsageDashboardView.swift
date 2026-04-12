@@ -99,9 +99,8 @@ struct UsageDashboardView: View {
                     .foregroundStyle(.green)
             }
         }
-        .padding(12)
-        .background(cardBackground(isActive: true))
-        .padding(.horizontal, 16)
+        .cardStyle()
+        .sectionPadding()
     }
 
     private static let costDisclaimer: LocalizedStringKey = "Estimated API-equivalent cost of your Claude Code usage, for reference only."
@@ -140,14 +139,8 @@ struct UsageDashboardView: View {
                           tooltip: "Claude Haiku 4 — fastest model, best for simple tasks")
             }
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.cardFill)
-                .strokeBorder(.cardBorderBrand, lineWidth: 1)
-                .shadow(color: .black.opacity(0.10), radius: 5, x: 0, y: 6)
-        )
-        .padding(.horizontal, 16)
+        .cardStyle()
+        .sectionPadding()
     }
 
     private func activityStat(icon: String, value: String, label: LocalizedStringKey, tooltip: LocalizedStringKey) -> some View {
@@ -227,9 +220,8 @@ struct UsageDashboardView: View {
                 .padding(.top, 4)
             }
         }
-        .padding(12)
-        .background(cardBackground(isActive: account.isActive))
-        .padding(.horizontal, 16)
+        .cardStyle(fill: account.isActive ? .cardFill : .cardFill)
+        .sectionPadding()
     }
 
     @ViewBuilder
@@ -244,23 +236,13 @@ struct UsageDashboardView: View {
                 .lineLimit(1)
 
             if account.isActive {
-                Text("Active")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(.green, in: Capsule())
+                Badge(text: String(localized: "Active"), color: .green)
             }
 
             Spacer()
 
             if let sub = account.displaySubscriptionType {
-                Text(sub)
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(.brand, in: Capsule())
+                Badge(text: sub, color: .brand)
             }
         }
     }
@@ -294,13 +276,6 @@ struct UsageDashboardView: View {
                     .foregroundStyle(statusColor)
             }
         }
-    }
-
-    private func cardBackground(isActive: Bool) -> some View {
-        RoundedRectangle(cornerRadius: 10)
-            .fill(isActive ? .cardFill : .cardFillNeutral)
-            .strokeBorder(isActive ? .cardBorderBrand : .cardBorderNeutral, lineWidth: 1)
-            .shadow(color: .black.opacity(0.10), radius: 5, x: 0, y: 6)
     }
 
     // MARK: - Usage Row

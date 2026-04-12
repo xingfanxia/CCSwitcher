@@ -68,14 +68,8 @@ struct CostDetailView: View {
                 .padding(.top, 2)
             }
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.cardFillGreen)
-                .strokeBorder(.cardBorderGreen, lineWidth: 1)
-                .shadow(color: .black.opacity(0.10), radius: 5, x: 0, y: 6)
-        )
-        .padding(.horizontal, 16)
+        .cardStyle()
+        .sectionPadding()
     }
 
     private var periodSummaryCards: some View {
@@ -104,13 +98,7 @@ struct CostDetailView: View {
                 .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.cardFillNeutral)
-                .strokeBorder(.cardBorderNeutral, lineWidth: 1)
-                .shadow(color: .black.opacity(0.10), radius: 5, x: 0, y: 6)
-        )
+        .cardStyle()
     }
 
     private func costForLastDays(_ days: Int, costs: [DailyCost], today: String, formatter: DateFormatter) -> Double {
@@ -221,9 +209,9 @@ struct CostDetailView: View {
                         Divider()
                     }
                 }
-                .background(.cardFillNeutral)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(.cardBorderNeutral, lineWidth: 1))
+                .background(.cardFill)
+                .clipShape(RoundedRectangle(cornerRadius: AppStyle.cardCornerRadius))
+                .overlay(RoundedRectangle(cornerRadius: AppStyle.cardCornerRadius).strokeBorder(.cardBorder, lineWidth: 1))
 
                 Text("Cache write = 5-min tier (1.25× base input). Cache read = 0.1× base input.")
                     .font(.system(size: 9))
@@ -242,14 +230,8 @@ struct CostDetailView: View {
                 .buttonStyle(.plain)
                 .foregroundStyle(.blue)
             }
-            .padding(12)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(.cardFillNeutral)
-                    .strokeBorder(.cardBorderNeutral, lineWidth: 1)
-                    .shadow(color: .black.opacity(0.10), radius: 5, x: 0, y: 6)
-            )
-            .padding(.horizontal, 16)
+            .cardStyle()
+            .sectionPadding()
         }
     }
 

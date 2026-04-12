@@ -97,12 +97,7 @@ struct AccountSwitcherView: View {
                         .help("Edit label")
 
                         if account.isActive {
-                            Text("Active")
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(.green, in: Capsule())
+                            Badge(text: String(localized: "Active"), color: .green)
                         }
                     }
                 }
@@ -159,7 +154,8 @@ struct AccountSwitcherView: View {
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(account.isActive ? .cardFillStrong : .clear)
-                .strokeBorder(account.isActive ? .cardBorderBrand : .cardBorderNeutral, lineWidth: 1)
+                .strokeBorder(.cardBorder, lineWidth: 1)
+                .shadow(color: AppStyle.cardShadowColor, radius: AppStyle.cardShadowRadius, x: 0, y: AppStyle.cardShadowY)
         )
     }
 
@@ -190,7 +186,8 @@ struct AccountSwitcherView: View {
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.cardFillStrong)
-                    .strokeBorder(.cardBorderBrand, lineWidth: 1)
+                    .strokeBorder(.cardBorder, lineWidth: 1)
+                    .shadow(color: AppStyle.cardShadowColor, radius: AppStyle.cardShadowRadius, x: 0, y: AppStyle.cardShadowY)
             )
         } else if showingAddConfirm {
             // Inline confirmation for "Add Current"
@@ -220,7 +217,8 @@ struct AccountSwitcherView: View {
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.cardFillStrong)
-                    .strokeBorder(.cardBorderBrand, lineWidth: 1)
+                    .strokeBorder(.cardBorder, lineWidth: 1)
+                    .shadow(color: AppStyle.cardShadowColor, radius: AppStyle.cardShadowRadius, x: 0, y: AppStyle.cardShadowY)
             )
         } else {
             VStack(spacing: 8) {
@@ -230,7 +228,7 @@ struct AccountSwitcherView: View {
                 } label: {
                     Label("Login New Account", systemImage: "person.badge.plus")
                         .font(.subheadline.weight(.medium))
-                        .foregroundColor(Color(red: 0x42/255, green: 0x42/255, blue: 0x42/255))
+                        .foregroundColor(AppStyle.buttonTextColor)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background(Color.white, in: RoundedRectangle(cornerRadius: 8))

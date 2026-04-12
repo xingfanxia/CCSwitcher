@@ -138,12 +138,7 @@ struct MainMenuView: View {
                         Text(account.effectiveDisplayName(obfuscated: !showFullEmail))
                             .font(.headline)
                         if let sub = account.displaySubscriptionType {
-                            Text(sub)
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(.brand, in: Capsule())
+                            Badge(text: sub, color: .brand)
                         }
                     }
                     Text(account.displayEmail(obfuscated: !showFullEmail))
@@ -173,10 +168,10 @@ struct MainMenuView: View {
 
     private var tabBar: some View {
         ZStack {
-            // Background capsule — 15% white fill + 40% white stroke
+            // Background capsule
             Capsule()
-                .fill(Color.white.opacity(0.15))
-                .overlay(Capsule().stroke(Color.white.opacity(0.40), lineWidth: 1))
+                .fill(.tabFill)
+                .overlay(Capsule().stroke(.tabBorder, lineWidth: 1))
 
             // Sliding indicator
             GeometryReader { geo in

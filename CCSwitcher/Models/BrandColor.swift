@@ -14,34 +14,26 @@ extension Color {
         }))
     }
 
-    // MARK: - Card Fills
+    // MARK: - Card
 
-    /// Active/brand card background.
+    /// Standard card fill.
     static let cardFill = Color.white.opacity(0.20)
-    /// Stronger active card background (e.g. active account row).
+    /// Emphasized card fill (e.g. active account row).
     static let cardFillStrong = Color.white.opacity(0.25)
-    /// Neutral/inactive card background.
-    static let cardFillNeutral = Color.white.opacity(0.20)
-    /// Green-tinted card background (cost cards).
-    static let cardFillGreen = Color.white.opacity(0.20)
+    /// Standard card border.
+    static let cardBorder = Color.white.opacity(0.40)
 
-    // MARK: - Card Borders
+    // MARK: - Tab Bar
 
-    /// Brand-colored card border.
-    static let cardBorderBrand = Color.white.opacity(0.40)
-    /// Neutral card border.
-    static let cardBorderNeutral = Color.white.opacity(0.40)
-    /// Green card border (cost cards).
-    static let cardBorderGreen = Color.white.opacity(0.40)
+    /// Tab bar background fill.
+    static let tabFill = Color.white.opacity(0.15)
+    /// Tab bar border.
+    static let tabBorder = Color.white.opacity(0.40)
 
     // MARK: - Subtle Backgrounds
 
     /// Subtle brand tint for banners and badges.
     static let subtleBrand = adaptive(light: brand.opacity(0.12), dark: brand.opacity(0.28))
-    /// Tab bar outer background.
-    static let tabBackground = adaptive(light: Color.gray.opacity(0.12), dark: Color.gray.opacity(0.22))
-    /// Tab bar selected indicator — no longer used, brand color applied directly.
-    static let tabSelected = adaptive(light: brand.opacity(0.32), dark: brand.opacity(0.52))
     /// Progress bar track.
     static let progressTrack = adaptive(light: Color.gray.opacity(0.18), dark: Color.gray.opacity(0.38))
 }
@@ -50,13 +42,9 @@ extension ShapeStyle where Self == Color {
     static var brand: Color { .brand }
     static var cardFill: Color { .cardFill }
     static var cardFillStrong: Color { .cardFillStrong }
-    static var cardFillNeutral: Color { .cardFillNeutral }
-    static var cardFillGreen: Color { .cardFillGreen }
-    static var cardBorderBrand: Color { .cardBorderBrand }
-    static var cardBorderNeutral: Color { .cardBorderNeutral }
-    static var cardBorderGreen: Color { .cardBorderGreen }
+    static var cardBorder: Color { .cardBorder }
+    static var tabFill: Color { .tabFill }
+    static var tabBorder: Color { .tabBorder }
     static var subtleBrand: Color { .subtleBrand }
-    static var tabBackground: Color { .tabBackground }
-    static var tabSelected: Color { .tabSelected }
     static var progressTrack: Color { .progressTrack }
 }

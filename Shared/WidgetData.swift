@@ -40,11 +40,17 @@ struct WidgetData: Codable {
     }
 
     /// Save into the widget extension's sandbox container (called by the main app, which is non-sandboxed).
+    /// Only writes if the container already exists — macOS creates it when the widget is first added
+    /// to the desktop. We must not create the container ourselves as it would lack the system metadata.
     func save() {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let containerAppSupport = home
+        let widgetContainer = home
             .appendingPathComponent("Library/Containers")
             .appendingPathComponent(Self.widgetBundleID)
+
+        guard FileManager.default.fileExists(atPath: widgetContainer.path) else { return }
+
+        let containerAppSupport = widgetContainer
             .appendingPathComponent("Data/Library/Application Support")
             .appendingPathComponent(Self.subdir)
 

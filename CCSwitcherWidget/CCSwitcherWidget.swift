@@ -544,14 +544,23 @@ private struct CircleWidgetView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            // Header
+            // Header — show account name instead of app name
             HStack(spacing: 5) {
                 Image(systemName: "brain.head.profile")
                     .font(.caption)
                     .foregroundStyle(brandColor)
-                Text("CCSwitcher")
+                Text(activeAccount?.email ?? "CCSwitcher")
                     .font(.caption.weight(.semibold))
+                    .lineLimit(1)
                 Spacer()
+                if let sub = activeAccount?.subscriptionType {
+                    Text(sub)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(brandColor)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 1)
+                        .background(brandColor.opacity(0.15), in: Capsule())
+                }
             }
 
             Spacer(minLength: 0)
@@ -560,11 +569,13 @@ private struct CircleWidgetView: View {
                 HStack(spacing: 12) {
                     ringStat(
                         label: "Session",
+                        resetTime: account.sessionResetTime,
                         utilization: account.sessionUtilization,
                         accent: colorForUtilization(account.sessionUtilization ?? 0)
                     )
                     ringStat(
                         label: "Weekly",
+                        resetTime: account.weeklyResetTime,
                         utilization: account.weeklyUtilization,
                         accent: colorForUtilization(account.weeklyUtilization ?? 0)
                     )
@@ -591,7 +602,7 @@ private struct CircleWidgetView: View {
         }
     }
 
-    private func ringStat(label: String, utilization: Double?, accent: Color) -> some View {
+    private func ringStat(label: String, resetTime: String?, utilization: Double?, accent: Color) -> some View {
         let pct = utilization ?? 0
         return VStack(spacing: 4) {
             ZStack {
@@ -609,6 +620,12 @@ private struct CircleWidgetView: View {
             Text(label)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+            if let reset = resetTime {
+                Text(reset)
+                    .font(.system(size: 9))
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+            }
         }
         .frame(maxWidth: .infinity)
     }

@@ -37,16 +37,16 @@ extension String {
         guard parts.count == 2 else { return self }
         let username = String(parts[0])
         let domain = String(parts[1])
-        
+
         let visibleCount = max(1, min(3, username.count))
         let visibleChars = username.prefix(visibleCount)
-        let obfuscatedUsername = visibleChars + "***"
-        
+        let obfuscatedUsername = visibleChars + "*"
+
         let domainParts = domain.split(separator: ".")
         if let lastPart = domainParts.last {
-            return "\(obfuscatedUsername)@***.\(lastPart)"
+            return "\(obfuscatedUsername)@*.\(lastPart)"
         }
-        
-        return "\(obfuscatedUsername)@***"
+
+        return "\(obfuscatedUsername)@*"
     }
 }

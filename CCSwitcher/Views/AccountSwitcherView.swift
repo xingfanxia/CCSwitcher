@@ -243,10 +243,11 @@ struct AccountSwitcherView: View {
                 } label: {
                     Label("Add Current Account", systemImage: "plus.circle")
                         .font(.caption)
+                        .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
+                .buttonStyle(.plain)
             }
         }
     }

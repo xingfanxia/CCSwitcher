@@ -26,7 +26,7 @@ struct UsageDashboardView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                if appState.accountUsage.isEmpty && appState.isLoading {
+                if appState.accounts.isEmpty && appState.isLoading {
                     VStack(spacing: 12) {
                         ProgressView()
                             .controlSize(.small)
@@ -36,7 +36,7 @@ struct UsageDashboardView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
-                } else if appState.accountUsage.isEmpty {
+                } else if appState.accounts.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "chart.bar.xaxis")
                             .font(.system(size: 32))
@@ -48,7 +48,7 @@ struct UsageDashboardView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
                 } else {
-                    // Today's cost banner
+                    // Today's cost banner (local parsing, no API needed)
                     todayCostBanner
 
                     // Today's activity stats
@@ -143,6 +143,7 @@ struct UsageDashboardView: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(.cardFill)
                 .strokeBorder(.cardBorderBrand, lineWidth: 1)
+                .shadow(color: .black.opacity(0.06), radius: 5, x: 0, y: 6)
         )
         .padding(.horizontal, 16)
     }
@@ -297,6 +298,7 @@ struct UsageDashboardView: View {
         RoundedRectangle(cornerRadius: 10)
             .fill(isActive ? .cardFill : .cardFillNeutral)
             .strokeBorder(isActive ? .cardBorderBrand : .cardBorderNeutral, lineWidth: 1)
+            .shadow(color: .black.opacity(0.06), radius: 5, x: 0, y: 6)
     }
 
     // MARK: - Usage Row

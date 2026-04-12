@@ -523,12 +523,14 @@ final class AppState: ObservableObject {
         log.info("[loadAccounts] Loaded \(decoded.count) accounts")
     }
 
-    private func saveAccounts() {
+    private func saveAccounts(refreshWidget: Bool = false) {
         if let data = try? JSONEncoder().encode(accounts) {
             UserDefaults.standard.set(data, forKey: accountsKey)
             log.debug("[saveAccounts] Saved \(self.accounts.count) accounts to UserDefaults")
         }
-        updateWidgetData()
+        if refreshWidget {
+            updateWidgetData()
+        }
     }
 
     private func updateActiveAccount(from status: AuthStatus) {

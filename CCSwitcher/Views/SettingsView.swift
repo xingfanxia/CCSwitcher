@@ -120,11 +120,12 @@ struct SettingsView: View {
         } else {
             UserDefaults.standard.set([lang], forKey: "AppleLanguages")
         }
-        // Relaunch for language change to take effect
-        let path = Bundle.main.bundleURL.path
+        UserDefaults.standard.synchronize()
+        // Relaunch after a short delay so the app fully quits first
+        let bundlePath = Bundle.main.bundleURL.path
         let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
-        task.arguments = [path]
+        task.executableURL = URL(fileURLWithPath: "/bin/sh")
+        task.arguments = ["-c", "sleep 1 && open \"\(bundlePath)\""]
         try? task.run()
         NSApp.terminate(nil)
     }

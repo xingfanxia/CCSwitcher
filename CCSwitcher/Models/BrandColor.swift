@@ -17,22 +17,22 @@ extension Color {
     // MARK: - Card Fills
 
     /// Active/brand card background.
-    static let cardFill = adaptive(light: Color.white.opacity(0.15), dark: Color.white.opacity(0.15))
+    static let cardFill = Color.white.opacity(0.20)
     /// Stronger active card background (e.g. active account row).
-    static let cardFillStrong = adaptive(light: Color.white.opacity(0.20), dark: Color.white.opacity(0.20))
+    static let cardFillStrong = Color.white.opacity(0.25)
     /// Neutral/inactive card background.
-    static let cardFillNeutral = adaptive(light: Color.white.opacity(0.15), dark: Color.white.opacity(0.15))
+    static let cardFillNeutral = Color.white.opacity(0.20)
     /// Green-tinted card background (cost cards).
-    static let cardFillGreen = adaptive(light: Color.white.opacity(0.15), dark: Color.white.opacity(0.15))
+    static let cardFillGreen = Color.white.opacity(0.20)
 
     // MARK: - Card Borders
 
     /// Brand-colored card border.
-    static let cardBorderBrand = adaptive(light: Color.white.opacity(0.40), dark: Color.white.opacity(0.40))
+    static let cardBorderBrand = Color.white.opacity(0.40)
     /// Neutral card border.
-    static let cardBorderNeutral = adaptive(light: Color.white.opacity(0.40), dark: Color.white.opacity(0.40))
+    static let cardBorderNeutral = Color.white.opacity(0.40)
     /// Green card border (cost cards).
-    static let cardBorderGreen = adaptive(light: Color.white.opacity(0.40), dark: Color.white.opacity(0.40))
+    static let cardBorderGreen = Color.white.opacity(0.40)
 
     // MARK: - Subtle Backgrounds
 

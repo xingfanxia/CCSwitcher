@@ -114,22 +114,14 @@ private struct SmallWidgetView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Header
+            // Header — icon + account + badge
             HStack(spacing: 5) {
                 Image(systemName: "brain.head.profile")
                     .font(.caption)
                     .foregroundStyle(brandColor)
-                Text("CCSwitcher")
-                    .font(.caption.weight(.semibold))
-                Spacer()
-            }
-
-            if let account = activeAccount {
-                // Account info
-                HStack(spacing: 4) {
+                if let account = activeAccount {
                     Text(account.email)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.caption.weight(.semibold))
                         .lineLimit(1)
                     Spacer()
                     if let sub = account.subscriptionType {
@@ -140,8 +132,14 @@ private struct SmallWidgetView: View {
                             .padding(.vertical, 1)
                             .background(brandColor.opacity(0.15), in: Capsule())
                     }
+                } else {
+                    Text("CCSwitcher")
+                        .font(.caption.weight(.semibold))
+                    Spacer()
                 }
+            }
 
+            if let account = activeAccount {
                 Spacer(minLength: 2)
 
                 // Usage bars

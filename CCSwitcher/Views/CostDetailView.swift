@@ -28,11 +28,11 @@ struct CostDetailView: View {
             HStack {
                 Text("Today")
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                 Spacer()
                 Text(todayDisplayDate())
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.textSecondary)
             }
 
             Text(formatCost(summary.todayCost))
@@ -47,11 +47,11 @@ struct CostDetailView: View {
                         HStack {
                             Text(model)
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.textSecondary)
                             Spacer()
                             Text(formatCost(cost))
                                 .font(.caption2.weight(.medium).monospacedDigit())
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.textSecondary)
                         }
                     }
                 }
@@ -59,11 +59,11 @@ struct CostDetailView: View {
                 HStack {
                     Label("\(today.sessionCount) sessions", systemImage: "terminal")
                         .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.textSecondary)
                     Spacer()
                     Text("\(formatTokenCount(today.totalTokens)) tokens")
                         .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.textSecondary)
                 }
                 .padding(.top, 2)
             }
@@ -92,7 +92,7 @@ struct CostDetailView: View {
         VStack(spacing: 4) {
             Text(title)
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.textSecondary)
             Text(formatCost(cost))
                 .font(.title3.weight(.semibold).monospacedDigit())
                 .foregroundStyle(.primary)
@@ -118,11 +118,11 @@ struct CostDetailView: View {
             HStack {
                 Text("Daily History")
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                 Spacer()
                 Text("Total: \(formatCost(appState.costSummary.totalCost))")
                     .font(.caption2.weight(.medium).monospacedDigit())
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
             }
             .padding(.horizontal, 16)
 
@@ -130,10 +130,10 @@ struct CostDetailView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "dollarsign.circle")
                         .font(.system(size: 32))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                     Text("No cost data available")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
@@ -173,7 +173,7 @@ struct CostDetailView: View {
             // Compact model breakdown
             Text(day.modelBreakdown.keys.sorted().joined(separator: ", "))
                 .font(.system(size: 8))
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(.textSecondary)
                 .frame(width: 50, alignment: .trailing)
                 .lineLimit(1)
         }
@@ -190,7 +190,7 @@ struct CostDetailView: View {
             HStack {
                 Text("How We Calculate")
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                 Spacer()
             }
             .padding(.horizontal, 16)
@@ -198,7 +198,7 @@ struct CostDetailView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Cost is computed from Claude Code session logs (~/.claude/projects/), deduplicated by request ID.")
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
 
                 // Pricing table
                 VStack(spacing: 0) {
@@ -215,7 +215,7 @@ struct CostDetailView: View {
 
                 Text("Cache write = 5-min tier (1.25× base input). Cache read = 0.1× base input.")
                     .font(.system(size: 9))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.textSecondary)
 
                 Button {
                     NSWorkspace.shared.open(Self.pricingURL)
@@ -249,7 +249,7 @@ struct CostDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .font(.system(size: 9, weight: .semibold))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.textSecondary)
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
     }
@@ -284,7 +284,7 @@ struct CostDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .font(.system(size: 9).monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.textSecondary)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
     }

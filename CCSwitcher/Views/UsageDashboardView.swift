@@ -34,7 +34,7 @@ struct UsageDashboardView: View {
                             .controlSize(.small)
                         Text("Loading usage data...")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.textSecondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
@@ -42,10 +42,10 @@ struct UsageDashboardView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "chart.bar.xaxis")
                             .font(.system(size: 32))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.textSecondary)
                         Text("Usage data unavailable")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.textSecondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
@@ -70,7 +70,7 @@ struct UsageDashboardView: View {
                         Text(lastRefresh, style: .relative)
                     }
                     .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.textSecondary)
                     .padding(.horizontal, 16)
                 }
             }
@@ -151,10 +151,10 @@ struct UsageDashboardView: View {
                 HStack(spacing: 3) {
                     Image(systemName: icon)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                     Text(label)
                         .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.textSecondary)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -203,7 +203,7 @@ struct UsageDashboardView: View {
                         .foregroundStyle(errorState.isExpired ? .yellow : .red)
                     Text(errorState.message)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                         .lineLimit(2)
                     Spacer()
                 }
@@ -214,7 +214,7 @@ struct UsageDashboardView: View {
                         .foregroundStyle(.yellow)
                     Text("Token expired. Switch to this account in Claude Code to refresh.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                     Spacer()
                 }
                 .padding(.top, 4)
@@ -269,7 +269,7 @@ struct UsageDashboardView: View {
                     .foregroundStyle(iconColor)
                 Text("Extra usage")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                 Spacer()
                 Text(LocalizedStringKey(enabled ? "On" : "Off"))
                     .font(.caption)
@@ -285,12 +285,12 @@ struct UsageDashboardView: View {
             HStack {
                 Text(label)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                 Spacer()
                 if let resetText {
                     Text("Resets in \(resetText)")
                         .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.textSecondary)
                 }
             }
 

@@ -31,14 +31,14 @@ struct AccountSwitcherView: View {
         VStack(spacing: 12) {
             Image(systemName: "person.crop.circle.badge.plus")
                 .font(.system(size: 40))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.textSecondary)
 
             Text("No Accounts")
                 .font(.headline)
 
             Text("Add your current Claude Code account to get started.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.textSecondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -76,7 +76,7 @@ struct AccountSwitcherView: View {
                             editingAccountId = nil
                         } label: {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.textSecondary)
                         }
                         .buttonStyle(.plain)
                     }
@@ -91,7 +91,7 @@ struct AccountSwitcherView: View {
                         } label: {
                             Image(systemName: "pencil")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.textSecondary)
                         }
                         .buttonStyle(.plain)
                         .help("Edit label")
@@ -104,17 +104,17 @@ struct AccountSwitcherView: View {
 
                 Text(account.displayEmail(obfuscated: !showFullEmail))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
 
                 HStack(spacing: 8) {
                     if let sub = account.displaySubscriptionType {
                         Label(sub, systemImage: "creditcard")
                             .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.textSecondary)
                     }
                     Text(account.provider.rawValue)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                 }
             }
 
@@ -175,7 +175,7 @@ struct AccountSwitcherView: View {
                     .controlSize(.small)
                 Text("Waiting for browser login...")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                 Text("Complete the login in your browser, then return here.")
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
@@ -194,7 +194,7 @@ struct AccountSwitcherView: View {
             VStack(spacing: 8) {
                 Text("This will capture the currently logged-in Claude Code account.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                     .multilineTextAlignment(.center)
 
                 HStack(spacing: 12) {
@@ -241,7 +241,7 @@ struct AccountSwitcherView: View {
                 } label: {
                     Label("Add Current Account", systemImage: "plus.circle")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
                 }

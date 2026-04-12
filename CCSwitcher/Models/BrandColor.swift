@@ -17,25 +17,32 @@ extension Color {
     // MARK: - Card
 
     /// Standard card fill.
-    static let cardFill = Color.white.opacity(0.20)
+    static let cardFill = adaptive(light: Color.white.opacity(0.20), dark: Color.black.opacity(0.21))
     /// Emphasized card fill (e.g. active account row).
-    static let cardFillStrong = Color.white.opacity(0.25)
+    static let cardFillStrong = adaptive(light: Color.white.opacity(0.25), dark: Color.black.opacity(0.28))
     /// Standard card border.
-    static let cardBorder = Color.white.opacity(0.40)
+    static let cardBorder = adaptive(light: Color.white.opacity(0.40), dark: Color.white.opacity(0.20))
 
     // MARK: - Tab Bar
 
     /// Tab bar background fill.
-    static let tabFill = Color.white.opacity(0.15)
+    static let tabFill = adaptive(light: Color.white.opacity(0.15), dark: Color.black.opacity(0.21))
     /// Tab bar border.
-    static let tabBorder = Color.white.opacity(0.40)
+    static let tabBorder = adaptive(light: Color.white.opacity(0.40), dark: Color.white.opacity(0.20))
+
+    // MARK: - Text
+
+    /// Primary text color for cards and tab selected state.
+    static let textPrimary = adaptive(light: Color.primary, dark: Color.white)
+    /// Secondary text color for card labels and tab unselected state.
+    static let textSecondary = adaptive(light: Color.secondary, dark: Color.white.opacity(0.55))
 
     // MARK: - Subtle Backgrounds
 
     /// Subtle brand tint for banners and badges.
     static let subtleBrand = adaptive(light: brand.opacity(0.12), dark: brand.opacity(0.28))
     /// Progress bar track.
-    static let progressTrack = adaptive(light: Color.gray.opacity(0.18), dark: Color.gray.opacity(0.38))
+    static let progressTrack = adaptive(light: Color.gray.opacity(0.18), dark: Color.white.opacity(0.15))
 }
 
 extension ShapeStyle where Self == Color {
@@ -45,6 +52,8 @@ extension ShapeStyle where Self == Color {
     static var cardBorder: Color { .cardBorder }
     static var tabFill: Color { .tabFill }
     static var tabBorder: Color { .tabBorder }
+    static var textPrimary: Color { .textPrimary }
+    static var textSecondary: Color { .textSecondary }
     static var subtleBrand: Color { .subtleBrand }
     static var progressTrack: Color { .progressTrack }
 }

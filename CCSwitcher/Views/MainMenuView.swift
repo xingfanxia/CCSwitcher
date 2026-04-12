@@ -66,7 +66,7 @@ struct MainMenuView: View {
                     .fontWeight(.medium)
                 Text(localOffPeakTimeString)
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
             }
             
             Spacer()
@@ -143,13 +143,13 @@ struct MainMenuView: View {
                     }
                     Text(account.displayEmail(obfuscated: !showFullEmail))
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                 } else {
                     Text("CCSwitcher")
                         .font(.headline)
                     Text("No account connected")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                 }
             }
 
@@ -193,7 +193,7 @@ struct MainMenuView: View {
                         .font(.subheadline.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
-                        .foregroundStyle(selectedTab == tab ? .white : .secondary)
+                        .foregroundStyle(selectedTab == tab ? .white : .textSecondary)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.15)) {
@@ -218,7 +218,7 @@ struct MainMenuView: View {
                     .font(.caption)
                 Text(error)
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                     .lineLimit(1)
             }
 
